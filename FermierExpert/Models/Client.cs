@@ -1,5 +1,4 @@
-﻿using ListaDubluInlantuita;
-using System;
+﻿using System;
 
 namespace FermierExpert.Models
 {
@@ -10,6 +9,5 @@ namespace FermierExpert.Models
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public SpokenLanguage Language { get; set; }
-        public ListaDubluInlantuita<CropField> Fields { get; set; }
     }
 }

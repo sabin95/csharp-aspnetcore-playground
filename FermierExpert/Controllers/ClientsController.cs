@@ -1,5 +1,7 @@
-﻿using FermierExpert.Data;
-using FermierExpert.Models;
+﻿using FermierExpert.Commands;
+using FermierExpert.Data;
+using FermierExpert.Responses;
+using ListaDubluInlantuita;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
@@ -21,47 +23,65 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            return Ok(Database.Clients.FirstOrDefault(x => x.Id == id));
+            var existingClient = Database.Clients.FirstOrDefault(x => x.Id == id);
+            if (existingClient is null)
+            {
+                return BadRequest();
+            }
+
+            var cropFields = new ListaDubluInlantuita<CropFieldResponse>();
+            foreach (var cropField in Database.CropFields
+                .Where(x => x.ClientId == id)
+                .Select(x => new CropFieldResponse(x)))
+            {
+                cropFields.Add(cropField);
+            }
+
+            var response = new ClientResponse(existingClient)
+            {
+                Fields = cropFields
+            };
+            return Ok(response);
         }
 
         [HttpPost]
-        public IActionResult Add([FromBody] Client client)
+        public IActionResult Add([FromBody] ClientCommand clientCommand)
         {
-            if (client is null)
+            if (clientCommand is null)
             {
                 return BadRequest();
             }
-            if (client.Id <= 0)
+            if (clientCommand.Id <= 0)
             {
                 return BadRequest();
             }
-            var alreadyExistingClient = Database.Clients.FirstOrDefault(x => x.Id == client.Id);
+            var alreadyExistingClient = Database.Clients.FirstOrDefault(x => x.Id == clientCommand.Id);
             if (alreadyExistingClient != null)
             {
                 return BadRequest();
             }
-            Database.Clients.Add(client);
+            Database.Clients.Add(clientCommand);
             return Ok();
         }
 
         [HttpPut]
-        public IActionResult Update([FromBody] Client client)
+        public IActionResult Update([FromBody] ClientCommand clientCommand)
         {
-            if (client is null)
+            if (clientCommand is null)
             {
                 return BadRequest();
             }
-            if (client.Id <= 0)
+            if (clientCommand.Id <= 0)
             {
                 return BadRequest();
             }
-            var existingClient = Database.Clients.FirstOrDefault(x => x.Id == client.Id);
+            var existingClient = Database.Clients.FirstOrDefault(x => x.Id == clientCommand.Id);
             if (existingClient == null)
             {
                 return BadRequest();
             }
             var indefOfExistingClient = Database.Clients.IndexOf(existingClient);
-            Database.Clients[indefOfExistingClient] = client;
+            Database.Clients[indefOfExistingClient] = clientCommand;
             return Ok();
         }
 

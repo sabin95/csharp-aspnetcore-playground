@@ -1,5 +1,5 @@
-﻿using FermierExpert.Data;
-using FermierExpert.Models;
+﻿using FermierExpert.Commands;
+using FermierExpert.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
@@ -25,43 +25,43 @@ namespace FermierExpert.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddCrop([FromBody] Crop crop)
+        public IActionResult AddCrop([FromBody] CropCommand cropCommand)
         {
-            if (crop is null)
+            if (cropCommand is null)
             {
                 return BadRequest();
             }
-            if (crop.Id <= 0)
+            if (cropCommand.Id <= 0)
             {
                 return BadRequest();
             }
-            var alreadyExistingCrop = Database.Crops.FirstOrDefault(x => x.Id == crop.Id);
+            var alreadyExistingCrop = Database.Crops.FirstOrDefault(x => x.Id == cropCommand.Id);
             if (alreadyExistingCrop != null)
             {
                 return BadRequest();
             }
-            Database.Crops.Add(crop);
+            Database.Crops.Add(cropCommand);
             return Ok();
         }
 
         [HttpPut]
-        public IActionResult UpdateCrop([FromBody] Crop crop)
+        public IActionResult UpdateCrop([FromBody] CropCommand cropCommand)
         {
-            if (crop is null)
+            if (cropCommand is null)
             {
                 return BadRequest();
             }
-            if (crop.Id <= 0)
+            if (cropCommand.Id <= 0)
             {
                 return BadRequest();
             }
-            var existingCrop = Database.Crops.FirstOrDefault(x => x.Id == crop.Id);
+            var existingCrop = Database.Crops.FirstOrDefault(x => x.Id == cropCommand.Id);
             if (existingCrop is null)
             {
                 return BadRequest();
             }
             var indexOfExistingCrop = Database.Crops.IndexOf(existingCrop);
-            Database.Crops[indexOfExistingCrop] = crop;
+            Database.Crops[indexOfExistingCrop] = cropCommand;
             return Ok();
         }
 

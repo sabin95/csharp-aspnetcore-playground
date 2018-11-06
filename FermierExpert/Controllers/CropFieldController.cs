@@ -1,5 +1,5 @@
-﻿using FermierExpert.Data;
-using FermierExpert.Models;
+﻿using FermierExpert.Commands;
+using FermierExpert.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
@@ -20,7 +20,7 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            return Ok(Database.CropFields.Where(x => x.Client.Id == existingClient.Id));
+            return Ok(Database.CropFields.Where(x => x.ClientId == existingClient.Id));
         }
 
         [HttpGet("{id}")]
@@ -34,65 +34,57 @@ namespace FermierExpert.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddCropField([FromBody] CropField cropField)
+        public IActionResult AddCropField([FromBody] CropFieldCommand cropFieldCommand)
         {
-            if (cropField is null)
+            if (cropFieldCommand is null)
             {
                 return BadRequest();
             }
-            if (cropField.Id <= 0)
+            if (cropFieldCommand.Id <= 0)
             {
                 return BadRequest();
             }
-            if (cropField.Client is null)
+            if (cropFieldCommand.ClientId <= 0)
             {
                 return BadRequest();
             }
-            var alreadyExistingCropField = Database.CropFields.FirstOrDefault(x => x.Id == cropField.Id);
+            var alreadyExistingCropField = Database.CropFields.FirstOrDefault(x => x.Id == cropFieldCommand.Id);
             if (alreadyExistingCropField != null)
             {
                 return BadRequest();
             }
-            var existingClient = Database.Clients.FirstOrDefault(x => x.Id == cropField.Client.Id);
+            var existingClient = Database.Clients.FirstOrDefault(x => x.Id == cropFieldCommand.ClientId);
             if (existingClient is null)
             {
                 return BadRequest();
             }
 
-            Database.CropFields.Add(cropField);
-            existingClient.Fields.Add(cropField);
+            Database.CropFields.Add(cropFieldCommand);
             return Ok();
         }
 
         [HttpPut]
-        public IActionResult UpdateCropField([FromBody] CropField cropField)
+        public IActionResult UpdateCropField([FromBody] CropFieldCommand cropFieldCommand)
         {
-            if (cropField is null)
+            if (cropFieldCommand is null)
             {
                 return BadRequest();
             }
-            if (cropField.Id <= 0)
+            if (cropFieldCommand.Id <= 0)
             {
                 return BadRequest();
             }
-            if (cropField.Client is null)
+            if (cropFieldCommand.ClientId <= 0)
             {
                 return BadRequest();
             }
-            var existingCropField = Database.CropFields.FirstOrDefault(x => x.Id == cropField.Id);
+            var existingCropField = Database.CropFields.FirstOrDefault(x => x.Id == cropFieldCommand.Id);
             if (existingCropField is null)
             {
                 return BadRequest();
             }
-            if (existingCropField.Client.Id != cropField.Client.Id)
-            {
-                var oldClient = Database.Clients.FirstOrDefault(x => x.Id == existingCropField.Id);
-                oldClient.Fields.Remove(oldClient.Fields.FirstOrDefault(cf => cf.Id == cropField.Id));
-                var newClient = Database.Clients.FirstOrDefault(x => x.Id == cropField.Client.Id);
-                newClient.Fields.Add(cropField);
-            }
             var indexOfExistingCropField = Database.CropFields.IndexOf(existingCropField);
-            Database.CropFields[indexOfExistingCropField] = cropField;
+            Database.CropFields[indexOfExistingCropField] = cropFieldCommand;
             return Ok();
         }
 
