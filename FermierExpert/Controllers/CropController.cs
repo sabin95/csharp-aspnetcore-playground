@@ -1,5 +1,7 @@
 ﻿using FermierExpert.Commands;
 using FermierExpert.Data;
+using FermierExpert.Responses;
+using ListaDubluInlantuita;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
@@ -11,7 +13,13 @@ namespace FermierExpert.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(Database.Crops);
+            var cropsResponse = new ListaDubluInlantuita<CropResponse>();
+            foreach (var crop in Database.Crops)
+            {
+                cropsResponse.Add(new CropResponse(crop));
+            }
+
+            return Ok(cropsResponse);
         }
 
         [HttpGet("{id}")]
@@ -21,7 +29,12 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            return Ok(Database.Crops.FirstOrDefault(x => x.Id == id));
+            var existingCrop = Database.Crops.FirstOrDefault(x => x.Id == id);
+            if (existingCrop == null)
+            {
+                return BadRequest();
+            }
+            return Ok(new CropResponse(existingCrop));
         }
 
         [HttpPost]

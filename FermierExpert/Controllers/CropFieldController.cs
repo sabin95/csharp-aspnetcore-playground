@@ -1,5 +1,7 @@
 ﻿using FermierExpert.Commands;
 using FermierExpert.Data;
+using FermierExpert.Responses;
+using ListaDubluInlantuita;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
@@ -20,7 +22,20 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            return Ok(Database.CropFields.Where(x => x.ClientId == existingClient.Id));
+            var cropFieldResponse = new ListaDubluInlantuita<CropFieldResponse>();
+            foreach (var cropField in Database.CropFields
+                .Where(x => x.ClientId == existingClient.Id)
+                .Select(x => new CropFieldResponse(x)))
+            {
+                cropField.Client = new ClientResponse(existingClient);
+                var existingCrop = Database.Crops.FirstOrDefault(x => x.Id == cropField.CropId && cropField.ClientId == existingClient.Id);
+                if (existingCrop != null)
+                {
+                    cropField.Crop = new CropResponse(existingCrop);
+                }
+                cropFieldResponse.Add(cropField);
+            }
+            return Ok(cropFieldResponse);
         }
 
         [HttpGet("{id}")]
@@ -30,7 +45,23 @@ namespace FermierExpert.Controllers
             {
                 return NotFound();
             }
-            return Ok(Database.CropFields.FirstOrDefault(x => x.Id == id));
+            var existingCropField = Database.CropFields.FirstOrDefault(x => x.Id == id);
+            if (existingCropField == null)
+            {
+                return BadRequest();
+            }
+            var response = new CropFieldResponse(existingCropField);
+            var existingCLient = Database.Clients.FirstOrDefault(x => x.Id == existingCropField.ClientId);
+            if (existingCLient != null)
+            {
+                response.Client = new ClientResponse(existingCLient);
+            }
+            var existingCrop = Database.Crops.FirstOrDefault(x => x.Id == existingCropField.CropId);
+            if (existingCrop != null)
+            {
+                response.Crop = new CropResponse(existingCrop);
+            }
+            return Ok(response);
         }
 
         [HttpPost]

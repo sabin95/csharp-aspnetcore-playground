@@ -13,7 +13,23 @@ namespace FermierExpert.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(Database.Clients);
+            var clientsResponse = new ListaDubluInlantuita<ClientResponse>();
+            foreach (var client in Database.Clients)
+            {
+                var cropFields = new ListaDubluInlantuita<CropFieldResponse>();
+                foreach (var cropField in Database.CropFields
+                .Where(x => x.ClientId == client.Id)
+                .Select(x => new CropFieldResponse(x)))
+                {
+                    cropFields.Add(cropField);
+                }
+                var response = new ClientResponse(client)
+                {
+                    Fields = cropFields
+                };
+                clientsResponse.Add(response);
+            }
+            return Ok(clientsResponse);
         }
 
         [HttpGet("{id}")]
