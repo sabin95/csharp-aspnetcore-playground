@@ -6,6 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Database_State\**" />
+    <Content Remove="Database_State\**" />
+    <EmbeddedResource Remove="Database_State\**" />
+    <None Remove="Database_State\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using FermierExpert.Commands;
 using FermierExpert.Data;
 using FermierExpert.Models;
 using FermierExpert.Responses;
+using FermierExpert.Services;
+using FermierExpert.Services.Contracts;
 using ListaDubluInlantuita;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace FermierExpert.Controllers
 {
@@ -16,6 +20,8 @@ namespace FermierExpert.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
+        private IPhoneNumberValidator _validator;
+
         [HttpGet]
         public IActionResult Get()
         {
@@ -65,26 +71,30 @@ namespace FermierExpert.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add([FromBody] EmployeeCommand employee)
+        public async Task<IActionResult> Add([FromBody] EmployeeCommand employeeCommand)
         {
-            if (employee is null)
+            if (employeeCommand is null)
             {
                 return BadRequest();
             }
-            if (employee.Id <= 0)
+            if (employeeCommand.Id <= 0)
             {
                 return BadRequest();
             }
-            var existingEmployee = Database.Employees.FirstOrDefault(x => x.Id == employee.Id);
+            var existingEmployee = Database.Employees.FirstOrDefault(x => x.Id == employeeCommand.Id);
             if (existingEmployee != null)
             {
                 return BadRequest();
             }
-            Database.Employees.Add(employee);
+            if (!await _validator.IsPhoneNumberValid(employeeCommand.Phone))
+            {
+                return BadRequest("Invalid phone number");
+            }
+            Database.Employees.Add(employeeCommand);
             return Ok();
         }
         [HttpPut]
-        public IActionResult Update([FromBody] EmployeeCommand employeeCommand)
+        public async Task<IActionResult> Update([FromBody] EmployeeCommand employeeCommand)
         {
             if (employeeCommand is null)
             {
@@ -98,6 +108,10 @@ namespace FermierExpert.Controllers
             if (existingEmployee is null)
             {
                 return BadRequest();
+            }
+            if (!await _validator.IsPhoneNumberValid(employeeCommand.Phone))
+            {
+                return BadRequest("Invalid phone number");
             }
             var indefOfExistingEmployee = Database.Employees.IndexOf(existingEmployee);
             Database.Employees[indefOfExistingEmployee] = employeeCommand;
@@ -121,6 +135,5 @@ namespace FermierExpert.Controllers
             Database.Employees.Remove(existingEmployee);
             return Ok();
         }
-
     }
 }
