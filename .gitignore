@@ -336,3 +336,8 @@ ASALocalRun/
 FermierExpert/Crops.json
 FermierExpert/CropFields.json
 FermierExpert/Clients.json
+/FermierExpert/Visits.json
+/FermierExpert/Stocks.json
+/FermierExpert/Products.json
+/FermierExpert/Employees.json
+/FermierExpert/Companies.json

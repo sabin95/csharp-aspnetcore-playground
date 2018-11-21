@@ -83,7 +83,7 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            Database.Products.Add(existingProduct);
+            Database.Products.Add(productCommand);
             return Ok();
         }
 

@@ -66,22 +66,22 @@ namespace FermierExpert.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add([FromBody] CompanyCommand company)
+        public IActionResult Add([FromBody] CompanyCommand companyCommand)
         {
-            if (company is null)
+            if (companyCommand is null)
             {
                 return BadRequest();
             }
-            if (company.Id <= 0)
+            if (companyCommand.Id <= 0)
             {
                 return BadRequest();
             }
-            var existingCompany = Database.Companies.FirstOrDefault(x => x.Id == company.Id);
+            var existingCompany = Database.Companies.FirstOrDefault(x => x.Id == companyCommand.Id);
             if (existingCompany != null)
             {
                 return BadRequest();
             }
-            Database.Companies.Add(company);
+            Database.Companies.Add(companyCommand);
             return Ok();
         }
 
