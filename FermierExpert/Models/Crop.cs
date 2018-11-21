@@ -1,8 +1,7 @@
 ﻿namespace FermierExpert.Models
 {
-    public class Crop
+    public class Crop : BaseEntity
     {
-        public int Id { get; set; }
         public string Name { get; set; }
     }
 }

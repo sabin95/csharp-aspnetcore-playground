@@ -2,9 +2,8 @@
 
 namespace FermierExpert.Models
 {
-    public class Visit
+    public class Visit : BaseEntity
     {
-        public int Id { get; set; }
         public DateTime Date { get; set; }
         public string VisitReason { get; set; }
         public int EmployeeId { get; set; }

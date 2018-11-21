@@ -28,7 +28,7 @@ namespace FermierExpert.Controllers
                 .Select(x => new CropFieldResponse(x)))
             {
                 cropField.Client = new ClientResponse(existingClient);
-                var existingCrop = Database.Crops.FirstOrDefault(x => x.Id == cropField.CropId && cropField.ClientId == existingClient.Id);
+                var existingCrop = Database.Crops.FirstOrDefault(x => x.Id == cropField.CropId);
                 if (existingCrop != null)
                 {
                     cropField.Crop = new CropResponse(existingCrop);

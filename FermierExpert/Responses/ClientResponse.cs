@@ -6,6 +6,8 @@ namespace FermierExpert.Responses
     public class ClientResponse : Client
     {
         public ListaDubluInlantuita<CropFieldResponse> Fields { get; set; }
+        public ListaDubluInlantuita<VisitResponse> Visits { get; set; }
+        public ListaDubluInlantuita<StockResponse> Stocks { get; set; }
         public ClientResponse()
         {
 

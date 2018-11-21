@@ -23,9 +23,25 @@ namespace FermierExpert.Controllers
                 {
                     cropFields.Add(cropField);
                 }
+                var visits = new ListaDubluInlantuita<VisitResponse>();
+                foreach (var visit in Database.Visits
+                .Where(x => x.ClientId == client.Id)
+                .Select(x => new VisitResponse(x)))
+                {
+                    visits.Add(visit);
+                }
+                var stocks = new ListaDubluInlantuita<StockResponse>();
+                foreach (var stock in Database.Stocks
+                .Where(x => x.ClientId == client.Id)
+                .Select(x => new StockResponse(x)))
+                {
+                    stocks.Add(stock);
+                }
                 var response = new ClientResponse(client)
                 {
-                    Fields = cropFields
+                    Fields = cropFields,
+                    Stocks = stocks,
+                    Visits = visits
                 };
                 clientsResponse.Add(response);
             }
@@ -52,10 +68,25 @@ namespace FermierExpert.Controllers
             {
                 cropFields.Add(cropField);
             }
-
+            var visits = new ListaDubluInlantuita<VisitResponse>();
+            foreach (var visit in Database.Visits
+            .Where(x => x.ClientId == existingClient.Id)
+            .Select(x => new VisitResponse(x)))
+            {
+                visits.Add(visit);
+            }
+            var stocks = new ListaDubluInlantuita<StockResponse>();
+            foreach (var stock in Database.Stocks
+            .Where(x => x.ClientId == existingClient.Id)
+            .Select(x => new StockResponse(x)))
+            {
+                stocks.Add(stock);
+            }
             var response = new ClientResponse(existingClient)
             {
-                Fields = cropFields
+                Fields = cropFields,
+                Stocks = stocks,
+                Visits = visits
             };
             return Ok(response);
         }
