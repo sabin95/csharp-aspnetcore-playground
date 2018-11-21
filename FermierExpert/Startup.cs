@@ -45,7 +45,7 @@ namespace FermierExpert
             {
                 foreach (var property in typeof(Database).GetProperties())
                 {
-                    var filename = $"{property.Name}.json";
+                    var filename = $@"Database_State\{property.Name}.json";
                     if (!File.Exists(filename))
                     {
                         continue;

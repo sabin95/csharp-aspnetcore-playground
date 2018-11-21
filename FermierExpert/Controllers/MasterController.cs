@@ -35,7 +35,7 @@ namespace FermierExpert.Controllers
                 return;
             }
             var serialized = JsonConvert.SerializeObject(list);
-            using (var sw = new StreamWriter($"{filename}.json"))
+            using (var sw = new StreamWriter($@"Database_State\{filename}.json"))
             {
                 await sw.WriteAsync(serialized);
             }

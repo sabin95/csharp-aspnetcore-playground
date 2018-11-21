@@ -5,9 +5,14 @@ VisualStudioVersion = 15.0.28010.2019
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ListaDubluInlantuita.Tests", "ListaSimpluInlantuita\ListaDubluInlantuita.Tests.csproj", "{AA49216B-C663-483D-9C94-0EE809F99D41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FermierExpert", "FermierExpert\FermierExpert.csproj", "{EBE94794-4B4E-42DD-8E97-9A9B275737B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FermierExpert", "FermierExpert\FermierExpert.csproj", "{EBE94794-4B4E-42DD-8E97-9A9B275737B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListaDubluInlantuita", "ListaDubluInlantuita\ListaDubluInlantuita.csproj", "{9B9A0350-E8EB-4C48-8CCF-2EF80267CFB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ListaDubluInlantuita", "ListaDubluInlantuita\ListaDubluInlantuita.csproj", "{9B9A0350-E8EB-4C48-8CCF-2EF80267CFB5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0ABECADF-B665-4989-981B-4FEA20A2DFE6}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
