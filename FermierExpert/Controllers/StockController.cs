@@ -16,7 +16,7 @@ namespace FermierExpert.Controllers
     [ApiController]
     public class StockController : ControllerBase
     {
-        [HttpGet("/clients/{clientId}")]
+        [HttpGet("clients/{clientId}")]
         public IActionResult GetStockByClient(int clientId)
         {
             if (clientId<=0)
@@ -44,7 +44,7 @@ namespace FermierExpert.Controllers
             return Ok(stocksResponse);
         }
 
-        [HttpGet("/product/productId")]
+        [HttpGet("product/productId")]
         public IActionResult GetStocksByProductId (int productId)
         {
             if (productId<=0)

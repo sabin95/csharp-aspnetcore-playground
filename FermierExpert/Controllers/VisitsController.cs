@@ -16,7 +16,7 @@ namespace FermierExpert.Controllers
     [ApiController]
     public class VisitsController : ControllerBase
     {
-        [HttpGet("/client/{clientId}")]
+        [HttpGet("client/{clientId}")]
         public IActionResult GetVisitsByClient(int clientId)
         {
             if (clientId <= 0)
@@ -44,7 +44,7 @@ namespace FermierExpert.Controllers
             return Ok(visitsResponse);
         }
 
-        [HttpGet("/employee/{employeeId}")]
+        [HttpGet("employee/{employeeId}")]
         public IActionResult GetVisitsByEmployee(int employeeId)
         {
             if (employeeId <= 0)

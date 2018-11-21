@@ -15,7 +15,7 @@ namespace FermierExpert.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        [HttpGet("/company/{companyId}")]
+        [HttpGet("company/{companyId}")]
         public IActionResult GetProductByCompanyId(int companyId)
         {
             if (companyId <= 0)

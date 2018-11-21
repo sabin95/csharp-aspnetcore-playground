@@ -19,7 +19,12 @@ namespace FermierExpert.Controllers
                 return;
             }
             await serialize(Database.Clients, nameof(Database.Clients));
+            await serialize(Database.Employees, nameof(Database.Employees));
+            await serialize(Database.Companies, nameof(Database.Companies));
             await serialize(Database.Crops, nameof(Database.Crops));
+            await serialize(Database.Products, nameof(Database.Products));
+            await serialize(Database.Stocks, nameof(Database.Stocks));
+            await serialize(Database.Visits, nameof(Database.Visits));
             await serialize(Database.CropFields, nameof(Database.CropFields));
         }
 

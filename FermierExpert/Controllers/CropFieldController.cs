@@ -10,7 +10,7 @@ namespace FermierExpert.Controllers
     [Route("api/[controller]")]
     public class CropFieldController : Controller
     {
-        [HttpGet("/client/{clientId}")]
+        [HttpGet("client/{clientId}")]
         public IActionResult GetCropFieldsOfClient(int clientId)
         {
             if (clientId <= 0)
