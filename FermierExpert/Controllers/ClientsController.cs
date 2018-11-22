@@ -91,6 +91,50 @@ namespace FermierExpert.Controllers
             return Ok(response);
         }
 
+        [HttpGet("search/name={name}")]
+        public IActionResult GetByName(string name)
+        {
+            if (name is null)
+            {
+                return BadRequest();
+            }
+            var clientResponses = new ListaDubluInlantuita<ClientResponse>();
+            foreach (var client in Database.Clients
+                .Where(x=>x.FirstName.ToLower().Contains(name) || x.LastName.ToLower().Contains(name))
+                .Select(x=> new ClientResponse(x)))
+            {
+                var cropFields = new ListaDubluInlantuita<CropFieldResponse>();
+                foreach (var cropField in Database.CropFields
+                    .Where(x => x.ClientId == client.Id)
+                    .Select(x => new CropFieldResponse(x)))
+                {
+                    cropFields.Add(cropField);
+                }
+                var visits = new ListaDubluInlantuita<VisitResponse>();
+                foreach (var visit in Database.Visits
+                .Where(x => x.ClientId == client.Id)
+                .Select(x => new VisitResponse(x)))
+                {
+                    visits.Add(visit);
+                }
+                var stocks = new ListaDubluInlantuita<StockResponse>();
+                foreach (var stock in Database.Stocks
+                .Where(x => x.ClientId == client.Id)
+                .Select(x => new StockResponse(x)))
+                {
+                    stocks.Add(stock);
+                }
+                var response = new ClientResponse(client)
+                {
+                    Fields = cropFields,
+                    Stocks = stocks,
+                    Visits = visits
+                };
+                clientResponses.Add(response);
+            }
+            return Ok(clientResponses);
+        }
+
         [HttpPost]
         public IActionResult Add([FromBody] ClientCommand clientCommand)
         {
