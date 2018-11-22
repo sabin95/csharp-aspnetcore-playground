@@ -101,7 +101,7 @@ namespace FermierExpert.Controllers
             }
             var clientResponses = new ListaDubluInlantuita<ClientResponse>();
             foreach (var client in Database.Clients
-                .Where(x=>x.FirstName.ToLower().Contains(name.ToLower()) || x.LastName.ToLower().Contains(name))
+                .Where(x=>x.FirstName.ToLower().Contains(name.ToLower()) || x.LastName.ToLower().Contains(name.ToLower()))
                 .Select(x=> new ClientResponse(x)))
             {
                 var cropFields = new ListaDubluInlantuita<CropFieldResponse>();
