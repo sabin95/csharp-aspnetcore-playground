@@ -38,7 +38,7 @@ namespace FermierExpert.Controllers
             return Ok(employeeResponse);
         }
 
-        [HttpGet("id={id}")]
+        [HttpGet("{id}")]
         public IActionResult GetEmployee(int id)
         {
             if (id <= 0)
@@ -64,12 +64,12 @@ namespace FermierExpert.Controllers
             return Ok(response);
         }
 
-        [HttpGet("search/name={name}")]
+        [HttpGet("search/{name}")]
         public IActionResult GetByName (string name)
         {
-            if (name is null)
+            if (String.IsNullOrEmpty(name))
             {
-                return BadRequest("LastName is null");
+                return BadRequest("Name is null");
             }
             var employeeResponses = new ListaDubluInlantuita<EmployeeResponse>();
             foreach (var existingEmployee in Database.Employees

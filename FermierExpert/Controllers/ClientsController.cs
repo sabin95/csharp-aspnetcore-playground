@@ -3,6 +3,7 @@ using FermierExpert.Data;
 using FermierExpert.Responses;
 using ListaDubluInlantuita;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Linq;
 
 namespace FermierExpert.Controllers
@@ -91,16 +92,16 @@ namespace FermierExpert.Controllers
             return Ok(response);
         }
 
-        [HttpGet("search/name={name}")]
+        [HttpGet("search/{name}")]
         public IActionResult GetByName(string name)
         {
-            if (name is null)
+            if (String.IsNullOrEmpty(name))
             {
-                return BadRequest();
+                return BadRequest("Name is null");
             }
             var clientResponses = new ListaDubluInlantuita<ClientResponse>();
             foreach (var client in Database.Clients
-                .Where(x=>x.FirstName.ToLower().Contains(name) || x.LastName.ToLower().Contains(name))
+                .Where(x=>x.FirstName.ToLower().Contains(name.ToLower()) || x.LastName.ToLower().Contains(name))
                 .Select(x=> new ClientResponse(x)))
             {
                 var cropFields = new ListaDubluInlantuita<CropFieldResponse>();
