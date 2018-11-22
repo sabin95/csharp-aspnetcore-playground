@@ -64,6 +64,36 @@ namespace FermierExpert.Controllers
             return Ok(response);
         }
 
+        [HttpGet("search/{name}")]
+        public IActionResult GetByName (string name)
+        {
+            if (String.IsNullOrEmpty(name))
+            {
+                return BadRequest("Name is null");
+            }
+            var employeeResponses = new ListaDubluInlantuita<EmployeeResponse>();
+            foreach (var existingEmployee in Database.Employees
+                .Where(x => x.LastName.ToLower().Contains((name.ToLower())) || x.FirstName.ToLower().Contains((name.ToLower())))
+                .Select(x => new EmployeeResponse(x)))
+            {
+                var visits = new ListaDubluInlantuita<VisitResponse>();
+                foreach (var visit in Database.Visits
+                    .Where(x => x.EmployeeId == existingEmployee.Id)
+                    .Select(x => new VisitResponse(x)))
+                {
+                    visits.Add(visit);
+                }
+                var response = new EmployeeResponse(existingEmployee)
+                {
+                    Visits = visits
+                };
+                employeeResponses.Add(existingEmployee);
+            }
+            return Ok(employeeResponses);
+        }
+
+       
+
         [HttpPost]
         public IActionResult Add([FromBody] EmployeeCommand employee)
         {
