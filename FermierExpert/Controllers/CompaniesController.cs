@@ -1,29 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using FermierExpert.Commands;
 using FermierExpert.Data;
-using FermierExpert.Models;
 using FermierExpert.Responses;
 using ListaDubluInlantuita;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FermierExpert.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CompanyController : ControllerBase
+    public class CompaniesController : ControllerBase
     {
+        private readonly Database _database;
+
+        public CompaniesController(Database database)
+        {
+            _database = database;
+        }
         [HttpGet]
         public IActionResult Get()
         {
             var companyResponses = new ListaDubluInlantuita<CompanyResponse>();
-            foreach (var company in Database.Companies)
+            foreach (var company in _database.Companies)
             {
                 var products = new ListaDubluInlantuita<ProductResponse>();
-                foreach (var product in Database.Products
+                foreach (var product in _database.Products
                     .Where(x => x.CompanyId == company.Id)
                     .Select(x => new ProductResponse(x)))
                 {
@@ -46,13 +47,13 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingCompany = Database.Companies.FirstOrDefault(x => x.Id == id);
+            var existingCompany = _database.Companies.FirstOrDefault(x => x.Id == id);
             if (existingCompany is null)
             {
                 return BadRequest();
             }
             var products = new ListaDubluInlantuita<ProductResponse>();
-            foreach (var product in Database.Products
+            foreach (var product in _database.Products
                 .Where(x => x.CompanyId == existingCompany.Id)
                 .Select(x => new ProductResponse(x)))
             {
@@ -76,12 +77,12 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingCompany = Database.Companies.FirstOrDefault(x => x.Id == companyCommand.Id);
+            var existingCompany = _database.Companies.FirstOrDefault(x => x.Id == companyCommand.Id);
             if (existingCompany != null)
             {
                 return BadRequest();
             }
-            Database.Companies.Add(companyCommand);
+            _database.Companies.Add(companyCommand);
             return Ok();
         }
 
@@ -96,29 +97,29 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingCompany = Database.Companies.FirstOrDefault(x => x.Id == company.Id);
+            var existingCompany = _database.Companies.FirstOrDefault(x => x.Id == company.Id);
             if (existingCompany is null)
             {
                 return BadRequest();
             }
-            var indexOfExistingCompany = Database.Companies.IndexOf(existingCompany);
-            Database.Companies[indexOfExistingCompany] = company;
+            var indexOfExistingCompany = _database.Companies.IndexOf(existingCompany);
+            _database.Companies[indexOfExistingCompany] = company;
             return Ok();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            if (id<=0)
+            if (id <= 0)
             {
                 return BadRequest();
             }
-            var existingCompany = Database.Companies.FirstOrDefault(x => x.Id == id);
+            var existingCompany = _database.Companies.FirstOrDefault(x => x.Id == id);
             if (existingCompany is null)
             {
                 return BadRequest();
             }
-            Database.Companies.Remove(existingCompany);
+            _database.Companies.Remove(existingCompany);
             return Ok();
         }
 

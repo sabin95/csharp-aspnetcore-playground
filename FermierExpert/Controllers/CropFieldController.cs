@@ -10,6 +10,12 @@ namespace FermierExpert.Controllers
     [Route("api/[controller]")]
     public class CropFieldController : Controller
     {
+        private readonly Database _database;
+
+        public CropFieldController(Database database)
+        {
+            _database = database;
+        }
         [HttpGet("client/{clientId}")]
         public IActionResult GetCropFieldsOfClient(int clientId)
         {
@@ -17,18 +23,18 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingClient = Database.Clients.FirstOrDefault(x => x.Id == clientId);
+            var existingClient = _database.Clients.FirstOrDefault(x => x.Id == clientId);
             if (existingClient is null)
             {
                 return BadRequest();
             }
             var cropFieldResponse = new ListaDubluInlantuita<CropFieldResponse>();
-            foreach (var cropField in Database.CropFields
+            foreach (var cropField in _database.CropFields
                 .Where(x => x.ClientId == existingClient.Id)
                 .Select(x => new CropFieldResponse(x)))
             {
                 cropField.Client = new ClientResponse(existingClient);
-                var existingCrop = Database.Crops.FirstOrDefault(x => x.Id == cropField.CropId);
+                var existingCrop = _database.Crops.FirstOrDefault(x => x.Id == cropField.CropId);
                 if (existingCrop != null)
                 {
                     cropField.Crop = new CropResponse(existingCrop);
@@ -45,18 +51,18 @@ namespace FermierExpert.Controllers
             {
                 return NotFound();
             }
-            var existingCropField = Database.CropFields.FirstOrDefault(x => x.Id == id);
+            var existingCropField = _database.CropFields.FirstOrDefault(x => x.Id == id);
             if (existingCropField == null)
             {
                 return BadRequest();
             }
             var response = new CropFieldResponse(existingCropField);
-            var existingCLient = Database.Clients.FirstOrDefault(x => x.Id == existingCropField.ClientId);
+            var existingCLient = _database.Clients.FirstOrDefault(x => x.Id == existingCropField.ClientId);
             if (existingCLient != null)
             {
                 response.Client = new ClientResponse(existingCLient);
             }
-            var existingCrop = Database.Crops.FirstOrDefault(x => x.Id == existingCropField.CropId);
+            var existingCrop = _database.Crops.FirstOrDefault(x => x.Id == existingCropField.CropId);
             if (existingCrop != null)
             {
                 response.Crop = new CropResponse(existingCrop);
@@ -79,18 +85,18 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var alreadyExistingCropField = Database.CropFields.FirstOrDefault(x => x.Id == cropFieldCommand.Id);
+            var alreadyExistingCropField = _database.CropFields.FirstOrDefault(x => x.Id == cropFieldCommand.Id);
             if (alreadyExistingCropField != null)
             {
                 return BadRequest();
             }
-            var existingClient = Database.Clients.FirstOrDefault(x => x.Id == cropFieldCommand.ClientId);
+            var existingClient = _database.Clients.FirstOrDefault(x => x.Id == cropFieldCommand.ClientId);
             if (existingClient is null)
             {
                 return BadRequest();
             }
 
-            Database.CropFields.Add(cropFieldCommand);
+            _database.CropFields.Add(cropFieldCommand);
             return Ok();
         }
 
@@ -109,13 +115,13 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingCropField = Database.CropFields.FirstOrDefault(x => x.Id == cropFieldCommand.Id);
+            var existingCropField = _database.CropFields.FirstOrDefault(x => x.Id == cropFieldCommand.Id);
             if (existingCropField is null)
             {
                 return BadRequest();
             }
-            var indexOfExistingCropField = Database.CropFields.IndexOf(existingCropField);
-            Database.CropFields[indexOfExistingCropField] = cropFieldCommand;
+            var indexOfExistingCropField = _database.CropFields.IndexOf(existingCropField);
+            _database.CropFields[indexOfExistingCropField] = cropFieldCommand;
             return Ok();
         }
 
@@ -127,12 +133,12 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingCropField = Database.CropFields.FirstOrDefault(x => x.Id == id);
+            var existingCropField = _database.CropFields.FirstOrDefault(x => x.Id == id);
             if (existingCropField is null)
             {
                 return BadRequest();
             }
-            Database.CropFields.Remove(existingCropField);
+            _database.CropFields.Remove(existingCropField);
             return Ok();
         }
     }

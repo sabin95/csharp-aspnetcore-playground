@@ -1,40 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using FermierExpert.Commands;
 using FermierExpert.Data;
-using FermierExpert.Models;
 using FermierExpert.Responses;
 using ListaDubluInlantuita;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FermierExpert.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
-    public class StockController : ControllerBase
+    public class StocksController : ControllerBase
     {
+        private readonly Database _database;
+        public StocksController(Database database)
+        {
+            _database = database;
+        }
         [HttpGet("clients/{clientId}")]
         public IActionResult GetStockByClient(int clientId)
         {
-            if (clientId<=0)
+            if (clientId <= 0)
             {
                 return BadRequest();
             }
-            var existingClient = Database.Clients.FirstOrDefault(x=>x.Id==clientId);
+            var existingClient = _database.Clients.FirstOrDefault(x => x.Id == clientId);
             if (existingClient is null)
             {
                 return BadRequest();
             }
             var stocksResponse = new ListaDubluInlantuita<StockResponse>();
-            foreach (var stock in Database.Stocks
-                .Where(x=>x.ClientId==existingClient.Id)
-                .Select(x=> new StockResponse(x)))
+            foreach (var stock in _database.Stocks
+                .Where(x => x.ClientId == existingClient.Id)
+                .Select(x => new StockResponse(x)))
             {
                 stock.Client = new ClientResponse(existingClient);
-                var existingProduct = Database.Products.FirstOrDefault(x => x.Id == stock.ProductId);
+                var existingProduct = _database.Products.FirstOrDefault(x => x.Id == stock.ProductId);
                 if (existingProduct != null)
                 {
                     stock.Product = new ProductResponse(existingProduct);
@@ -45,25 +46,25 @@ namespace FermierExpert.Controllers
         }
 
         [HttpGet("product/productId")]
-        public IActionResult GetStocksByProductId (int productId)
+        public IActionResult GetStocksByProductId(int productId)
         {
-            if (productId<=0)
+            if (productId <= 0)
             {
                 return BadRequest();
             }
-            var existingProduct = Database.Products.FirstOrDefault(x => x.Id == productId);
+            var existingProduct = _database.Products.FirstOrDefault(x => x.Id == productId);
             if (existingProduct is null)
             {
                 return BadRequest();
             }
             var stocksResponse = new ListaDubluInlantuita<StockResponse>();
-            foreach (var stock in Database.Stocks
-                .Where(x=>x.ProductId==existingProduct.Id)
-                .Select(x=> new StockResponse(x)))
+            foreach (var stock in _database.Stocks
+                .Where(x => x.ProductId == existingProduct.Id)
+                .Select(x => new StockResponse(x)))
             {
                 stock.Product = new ProductResponse(existingProduct);
-                var existingClient = Database.Clients.FirstOrDefault(x=>x.Id == stock.ClientId);
-                if (existingClient!=null)
+                var existingClient = _database.Clients.FirstOrDefault(x => x.Id == stock.ClientId);
+                if (existingClient != null)
                 {
                     stock.Client = new ClientResponse(existingClient);
                 }
@@ -75,21 +76,21 @@ namespace FermierExpert.Controllers
         [HttpGet]
         public IActionResult GetByStockId(int stockId)
         {
-            if (stockId <=0)
+            if (stockId <= 0)
             {
                 return BadRequest();
             }
-            var existingStock = Database.Stocks.FirstOrDefault(x => x.Id == stockId);
+            var existingStock = _database.Stocks.FirstOrDefault(x => x.Id == stockId);
             if (existingStock is null)
             {
                 return BadRequest();
             }
-            var existingProduct = Database.Products.FirstOrDefault(x => x.Id == existingStock.ProductId);
+            var existingProduct = _database.Products.FirstOrDefault(x => x.Id == existingStock.ProductId);
             if (existingProduct is null)
             {
                 return BadRequest();
             }
-            var existingClient = Database.Clients.FirstOrDefault(x=>x.Id==existingStock.ClientId);
+            var existingClient = _database.Clients.FirstOrDefault(x => x.Id == existingStock.ClientId);
             if (existingClient is null)
             {
                 return BadRequest();
@@ -105,30 +106,30 @@ namespace FermierExpert.Controllers
         [HttpPost]
         public IActionResult Add([FromBody] StockCommand stockCommand)
         {
-            if(stockCommand is null)
+            if (stockCommand is null)
             {
                 return BadRequest();
             }
-            if (stockCommand.Id<=0)
+            if (stockCommand.Id <= 0)
             {
                 return BadRequest();
             }
-            var existingStock = Database.Stocks.FirstOrDefault(x => x.Id == stockCommand.Id);
+            var existingStock = _database.Stocks.FirstOrDefault(x => x.Id == stockCommand.Id);
             if (existingStock != null)
             {
                 return BadRequest();
             }
-            var existingProduct = Database.Products.FirstOrDefault(x => x.Id == stockCommand.ProductId);
+            var existingProduct = _database.Products.FirstOrDefault(x => x.Id == stockCommand.ProductId);
             if (existingProduct is null)
             {
                 return BadRequest();
             }
-            var existingClient = Database.Clients.FirstOrDefault(x=>x.Id==stockCommand.ClientId);
+            var existingClient = _database.Clients.FirstOrDefault(x => x.Id == stockCommand.ClientId);
             if (existingClient is null)
             {
                 return BadRequest();
             }
-            Database.Stocks.Add(stockCommand);
+            _database.Stocks.Add(stockCommand);
             return Ok();
         }
 
@@ -143,39 +144,39 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingStock = Database.Stocks.FirstOrDefault(x => x.Id == stockCommand.Id);
+            var existingStock = _database.Stocks.FirstOrDefault(x => x.Id == stockCommand.Id);
             if (existingStock is null)
             {
                 return BadRequest();
             }
-            var existingProduct = Database.Products.FirstOrDefault(x => x.Id == stockCommand.ProductId);
+            var existingProduct = _database.Products.FirstOrDefault(x => x.Id == stockCommand.ProductId);
             if (existingProduct is null)
             {
                 return BadRequest();
             }
-            var existingClient = Database.Clients.FirstOrDefault(x => x.Id == stockCommand.ClientId);
+            var existingClient = _database.Clients.FirstOrDefault(x => x.Id == stockCommand.ClientId);
             if (existingClient is null)
             {
                 return BadRequest();
             }
-            var indexOfExistingStock = Database.Stocks.IndexOf(existingStock);
-            Database.Stocks[indexOfExistingStock] = stockCommand;
+            var indexOfExistingStock = _database.Stocks.IndexOf(existingStock);
+            _database.Stocks[indexOfExistingStock] = stockCommand;
             return Ok();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            if (id<=0)
+            if (id <= 0)
             {
                 return BadRequest();
             }
-            var existingStock = Database.Stocks.FirstOrDefault(x=>x.Id==id);
+            var existingStock = _database.Stocks.FirstOrDefault(x => x.Id == id);
             if (existingStock is null)
             {
                 return BadRequest();
             }
-            Database.Stocks.Remove(existingStock);
+            _database.Stocks.Remove(existingStock);
             return Ok();
         }
 

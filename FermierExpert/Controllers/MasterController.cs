@@ -11,6 +11,12 @@ namespace FermierExpert.Controllers
     [Route("api/[controller]")]
     public class MasterController
     {
+        private readonly Database _database;
+
+        public MasterController(Database database)
+        {
+            _database = database;
+        }
         [HttpGet("save")]
         public async Task SaveDatabase()
         {
@@ -18,14 +24,14 @@ namespace FermierExpert.Controllers
             {
                 return;
             }
-            await serialize(Database.Clients, nameof(Database.Clients));
-            await serialize(Database.Employees, nameof(Database.Employees));
-            await serialize(Database.Companies, nameof(Database.Companies));
-            await serialize(Database.Crops, nameof(Database.Crops));
-            await serialize(Database.Products, nameof(Database.Products));
-            await serialize(Database.Stocks, nameof(Database.Stocks));
-            await serialize(Database.Visits, nameof(Database.Visits));
-            await serialize(Database.CropFields, nameof(Database.CropFields));
+            await serialize(_database.Clients, nameof(Database.Clients));
+            await serialize(_database.Employees, nameof(Database.Employees));
+            await serialize(_database.Companies, nameof(Database.Companies));
+            await serialize(_database.Crops, nameof(Database.Crops));
+            await serialize(_database.Products, nameof(Database.Products));
+            await serialize(_database.Stocks, nameof(Database.Stocks));
+            await serialize(_database.Visits, nameof(Database.Visits));
+            await serialize(_database.CropFields, nameof(Database.CropFields));
         }
 
         private async Task serialize<T>(ListaDubluInlantuita<T> list, string filename)
