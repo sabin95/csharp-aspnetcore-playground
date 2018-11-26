@@ -12,28 +12,22 @@ namespace FermierExpert.Tests
 {
     public class EmployeesControllerTests
     {
-        private readonly EmployeesController _controller;
-        private readonly Database testDatabase = new Database { Employees = new ListaDubluInlantuita<Employee> { new Employee { Id = 1 } } };
-        public EmployeesControllerTests()
-        {
-            _controller = new EmployeesController(testDatabase, new NumverifyPhoneNumberValidator());
-        }
 
+
+        #region Add
         [Fact]
         public async Task Add_Should_Return_Bad_Request_On_Null_Commnad()
         {
-            // arrange
-
-            // act
-            var response = await _controller.Add(null);
-            // assert
+            var controller = new EmployeesController(new Database { Employees = new ListaDubluInlantuita<Employee> { new Employee { Id = 1 } } }, new RegexPhoneNumberValidator(), new RegexEmailAddressValidator());
+            var response = await controller.Add(null);
             Assert.IsType<BadRequestResult>(response);
         }
 
         [Fact]
         public async Task Add_Should_Return_Bad_Request_On_Invalid_Id()
         {
-            var response = await _controller.Add(new Commands.EmployeeCommand
+            var controller = new EmployeesController(new Database { Employees = new ListaDubluInlantuita<Employee> { new Employee { Id = 1 } } }, new RegexPhoneNumberValidator(), new RegexEmailAddressValidator());
+            var response = await controller.Add(new Commands.EmployeeCommand
             {
                 Id = 0
             });
@@ -43,18 +37,75 @@ namespace FermierExpert.Tests
         [Fact]
         public async Task Add_Should_Return_Bad_Request_On_Existing_Employee()
         {
-
+            var controller = new EmployeesController(new Database { Employees = new ListaDubluInlantuita<Employee> { new Employee { Id = 1 } } }, new RegexPhoneNumberValidator(), new RegexEmailAddressValidator());
             var empoyeeToAdd = new EmployeeCommand { Id = 1 };
-            var response = await _controller.Add(empoyeeToAdd);
+            var response = await controller.Add(empoyeeToAdd);
             Assert.IsType<BadRequestResult>(response);
         }
 
         [Fact]
         public async Task Add_Should_Return_Bad_Request_On_Invalid_PhoneNumber()
         {
-            var employee = new EmployeeCommand { Id = 2, Phone = "073dsds0151058" };
-            var response = await _controller.Add(employee);
+            var controller = new EmployeesController(new Database { Employees = new ListaDubluInlantuita<Employee> { new Employee { Id = 1 } } }, new RegexPhoneNumberValidator(), new RegexEmailAddressValidator());
+            var employee = new EmployeeCommand { Id = 2, Phone = "073dsds0151058", Email = "dsadsadsa" };
+            var response = await controller.Add(employee);
             Assert.IsType<BadRequestObjectResult>(response);
         }
+
+        [Fact]
+        public async Task Add_Should_Return_Bad_Request_On_Invalid_Email()
+        {
+            var controller = new EmployeesController(new Database { Employees = new ListaDubluInlantuita<Employee> { new Employee { Id = 1 } } }, new RegexPhoneNumberValidator(), new RegexEmailAddressValidator());
+            var employee = new EmployeeCommand { Id = 2, Phone = "073dsds0151058", Email = "dsadsadsa" };
+            var response = await controller.Add(employee);
+            Assert.IsType<BadRequestObjectResult>(response);
+        }
+        #endregion
+
+        #region Update
+        [Fact]
+        public async Task Update_Should_Return_Bad_Request_On_Null_Commnad()
+        {
+            var controller = new EmployeesController(new Database { Employees = new ListaDubluInlantuita<Employee> { new Employee { Id = 1 } } }, new RegexPhoneNumberValidator(), new RegexEmailAddressValidator());
+            var response = await controller.Update(null);
+            Assert.IsType<BadRequestResult>(response);
+        }
+
+        [Fact]
+        public async Task Update_Should_Return_Bad_Request_On_Invalid_Id()
+        {
+            var controller = new EmployeesController(new Database { Employees = new ListaDubluInlantuita<Employee> { new Employee { Id = 1 } } }, new RegexPhoneNumberValidator(), new RegexEmailAddressValidator());
+            var response = await controller.Update(new Commands.EmployeeCommand
+            {
+                Id = 0
+            });
+            Assert.IsType<BadRequestResult>(response);
+        }
+        [Fact]
+        public async Task Update_Should_Return_Bad_Request_On_NonExisting_Employee()
+        {
+            var controller = new EmployeesController(new Database { Employees = new ListaDubluInlantuita<Employee> { new Employee { Id = 1 } } }, new RegexPhoneNumberValidator(), new RegexEmailAddressValidator());
+            var empoyeeToAdd = new EmployeeCommand { Id = 2 };
+            var response = await controller.Update(empoyeeToAdd);
+            Assert.IsType<BadRequestResult>(response);
+        }
+        [Fact]
+        public async Task Update_Should_Return_Bad_Request_On_Invalid_PhoneNumber()
+        {
+            var controller = new EmployeesController(new Database { Employees = new ListaDubluInlantuita<Employee> { new Employee { Id = 1 } } }, new RegexPhoneNumberValidator(), new RegexEmailAddressValidator());
+            var employee = new EmployeeCommand { Id = 1, Phone = "073dsds0151058", Email = "dsadsadsa" };
+            var response = await controller.Update(employee);
+            Assert.IsType<BadRequestObjectResult>(response);
+        }
+
+        [Fact]
+        public async Task Update_Should_Return_Bad_Request_On_Invalid_Email()
+        {
+            var controller = new EmployeesController(new Database { Employees = new ListaDubluInlantuita<Employee> { new Employee { Id = 1 } } }, new RegexPhoneNumberValidator(), new RegexEmailAddressValidator());
+            var employee = new EmployeeCommand { Id = 1, Phone = "073dsds0151058", Email = "dsadsadsa" };
+            var response = await controller.Update(employee);
+            Assert.IsType<BadRequestObjectResult>(response);
+        }
+        #endregion
     }
 }
