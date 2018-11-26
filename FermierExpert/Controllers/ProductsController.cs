@@ -1,20 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using FermierExpert.Commands;
 using FermierExpert.Data;
 using FermierExpert.Responses;
 using ListaDubluInlantuita;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FermierExpert.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class ProductsController : ControllerBase
     {
+        private readonly Database _database;
+
+        public ProductsController(Database database)
+        {
+            _database = database;
+        }
         [HttpGet("company/{companyId}")]
         public IActionResult GetProductByCompanyId(int companyId)
         {
@@ -22,13 +24,13 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingCompany = Database.Companies.FirstOrDefault(x => x.Id == companyId);
+            var existingCompany = _database.Companies.FirstOrDefault(x => x.Id == companyId);
             if (existingCompany is null)
             {
                 return BadRequest();
             }
             var productsResponse = new ListaDubluInlantuita<ProductResponse>();
-            foreach (var product in Database.Products
+            foreach (var product in _database.Products
                 .Where(x => x.CompanyId == existingCompany.Id)
                 .Select(x => new ProductResponse(x)))
             {
@@ -45,12 +47,12 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingProduct = Database.Products.FirstOrDefault(x => x.Id == id);
+            var existingProduct = _database.Products.FirstOrDefault(x => x.Id == id);
             if (existingProduct is null)
             {
                 return BadRequest();
             }
-            var existingCompany = Database.Companies.FirstOrDefault(x => x.Id == existingProduct.CompanyId);
+            var existingCompany = _database.Companies.FirstOrDefault(x => x.Id == existingProduct.CompanyId);
             if (existingCompany is null)
             {
                 return BadRequest();
@@ -73,17 +75,17 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingProduct = Database.Products.FirstOrDefault(x => x.Id == productCommand.Id);
+            var existingProduct = _database.Products.FirstOrDefault(x => x.Id == productCommand.Id);
             if (existingProduct != null)
             {
                 return BadRequest();
             }
-            var existingCompany = Database.Companies.FirstOrDefault(x => x.Id == productCommand.CompanyId);
+            var existingCompany = _database.Companies.FirstOrDefault(x => x.Id == productCommand.CompanyId);
             if (existingCompany is null)
             {
                 return BadRequest();
             }
-            Database.Products.Add(productCommand);
+            _database.Products.Add(productCommand);
             return Ok();
         }
 
@@ -98,18 +100,18 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingProduct = Database.Products.FirstOrDefault(x => x.Id == productCommand.Id);
+            var existingProduct = _database.Products.FirstOrDefault(x => x.Id == productCommand.Id);
             if (existingProduct is null)
             {
                 return BadRequest();
             }
-            var existingCompany = Database.Companies.FirstOrDefault(x => x.Id == productCommand.CompanyId);
+            var existingCompany = _database.Companies.FirstOrDefault(x => x.Id == productCommand.CompanyId);
             if (existingCompany is null)
             {
                 return BadRequest();
             }
-            var indexOfExistingProduct = Database.Products.IndexOf(existingProduct);
-            Database.Products[indexOfExistingProduct] = productCommand;
+            var indexOfExistingProduct = _database.Products.IndexOf(existingProduct);
+            _database.Products[indexOfExistingProduct] = productCommand;
             return Ok();
         }
 
@@ -120,12 +122,12 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingProduct = Database.Products.FirstOrDefault(x => x.Id == id);
+            var existingProduct = _database.Products.FirstOrDefault(x => x.Id == id);
             if (existingProduct is null)
             {
                 return BadRequest();
             }
-            Database.Products.Remove(existingProduct);
+            _database.Products.Remove(existingProduct);
             return Ok();
         }
     }

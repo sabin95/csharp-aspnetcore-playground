@@ -1,6 +1,6 @@
 ﻿using FermierExpert.Data;
-using FermierExpert.Models;
-using ListaDubluInlantuita;
+using FermierExpert.Services;
+using FermierExpert.Services.Contracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
 using System.IO;
-using System.Linq;
 
 namespace FermierExpert
 {
@@ -37,9 +36,13 @@ namespace FermierExpert
                 })
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddSingleton<Database>();
+            services.AddTransient<IPhoneNumberValidator, RegexPhoneNumberValidator>();
+            services.AddTransient<IEmailAddressValidator, RegexEmailAddressValidator>();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, Database database)
         {
             if (!MyConfig.DisableSave)
             {
@@ -53,7 +56,7 @@ namespace FermierExpert
                     using (var sr = new StreamReader(filename))
                     {
                         var data = JsonConvert.DeserializeObject(sr.ReadToEnd(), property.PropertyType);
-                        property.SetValue(null, data);
+                        property.SetValue(database, data);
                     }
                 }
             }

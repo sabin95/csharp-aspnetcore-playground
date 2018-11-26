@@ -8,13 +8,19 @@ using System.Linq;
 namespace FermierExpert.Controllers
 {
     [Route("api/[controller]")]
-    public class CropController : Controller
+    public class CropsController : Controller
     {
+        private readonly Database _database;
+
+        public CropsController(Database database)
+        {
+            _database = database;
+        }
         [HttpGet]
         public IActionResult Get()
         {
             var cropsResponse = new ListaDubluInlantuita<CropResponse>();
-            foreach (var crop in Database.Crops)
+            foreach (var crop in _database.Crops)
             {
                 cropsResponse.Add(new CropResponse(crop));
             }
@@ -29,7 +35,7 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingCrop = Database.Crops.FirstOrDefault(x => x.Id == id);
+            var existingCrop = _database.Crops.FirstOrDefault(x => x.Id == id);
             if (existingCrop == null)
             {
                 return BadRequest();
@@ -48,12 +54,12 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var alreadyExistingCrop = Database.Crops.FirstOrDefault(x => x.Id == cropCommand.Id);
+            var alreadyExistingCrop = _database.Crops.FirstOrDefault(x => x.Id == cropCommand.Id);
             if (alreadyExistingCrop != null)
             {
                 return BadRequest();
             }
-            Database.Crops.Add(cropCommand);
+            _database.Crops.Add(cropCommand);
             return Ok();
         }
 
@@ -68,13 +74,13 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingCrop = Database.Crops.FirstOrDefault(x => x.Id == cropCommand.Id);
+            var existingCrop = _database.Crops.FirstOrDefault(x => x.Id == cropCommand.Id);
             if (existingCrop is null)
             {
                 return BadRequest();
             }
-            var indexOfExistingCrop = Database.Crops.IndexOf(existingCrop);
-            Database.Crops[indexOfExistingCrop] = cropCommand;
+            var indexOfExistingCrop = _database.Crops.IndexOf(existingCrop);
+            _database.Crops[indexOfExistingCrop] = cropCommand;
             return Ok();
         }
 
@@ -85,12 +91,12 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var cropToRemove = Database.Crops.FirstOrDefault(x => x.Id == id);
+            var cropToRemove = _database.Crops.FirstOrDefault(x => x.Id == id);
             if (cropToRemove is null)
             {
                 return BadRequest();
             }
-            Database.Crops.Remove(cropToRemove);
+            _database.Crops.Remove(cropToRemove);
             return Ok();
         }
     }

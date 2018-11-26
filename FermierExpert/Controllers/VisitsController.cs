@@ -16,6 +16,11 @@ namespace FermierExpert.Controllers
     [ApiController]
     public class VisitsController : ControllerBase
     {
+        private Database _database;
+        public VisitsController(Database database)
+        {
+            _database = database;
+        }
         [HttpGet("client/{clientId}")]
         public IActionResult GetVisitsByClient(int clientId)
         {
@@ -23,18 +28,18 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingClient = Database.Clients.FirstOrDefault(x => x.Id == clientId);
+            var existingClient = _database.Clients.FirstOrDefault(x => x.Id == clientId);
             if (existingClient is null)
             {
                 return BadRequest();
             }
             var visitsResponse = new ListaDubluInlantuita<VisitResponse>();
-            foreach (var visit in Database.Visits
+            foreach (var visit in _database.Visits
                 .Where(x => x.ClientId == existingClient.Id)
                 .Select(x => new VisitResponse(x)))
             {
                 visit.Client = new ClientResponse(existingClient);
-                var existingEmployee = Database.Employees.FirstOrDefault(x => x.Id == visit.EmployeeId);
+                var existingEmployee = _database.Employees.FirstOrDefault(x => x.Id == visit.EmployeeId);
                 if (existingEmployee != null)
                 {
                     visit.Employee = new EmployeeResponse(existingEmployee);
@@ -51,18 +56,18 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingEmployee = Database.Employees.FirstOrDefault(x => x.Id == employeeId);
+            var existingEmployee = _database.Employees.FirstOrDefault(x => x.Id == employeeId);
             if (existingEmployee is null)
             {
                 return BadRequest();
             }
             var visitsResponse = new ListaDubluInlantuita<VisitResponse>();
-            foreach (var visit in Database.Visits
+            foreach (var visit in _database.Visits
                 .Where(x => x.EmployeeId == existingEmployee.Id)
                 .Select(x => new VisitResponse(x)))
             {
                 visit.Employee = new EmployeeResponse(existingEmployee);
-                var existingClient = Database.Clients.FirstOrDefault(x => x.Id == visit.ClientId);
+                var existingClient = _database.Clients.FirstOrDefault(x => x.Id == visit.ClientId);
                 if (existingClient != null)
                 {
                     visit.Client = new ClientResponse(existingClient);
@@ -79,18 +84,18 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingVisit = Database.Visits.FirstOrDefault(x => x.Id == id);
+            var existingVisit = _database.Visits.FirstOrDefault(x => x.Id == id);
             if (existingVisit is null)
             {
                 return BadRequest();
             }
             var response = new VisitResponse(existingVisit);
-            var existingClient = Database.Clients.FirstOrDefault(x => x.Id == response.ClientId);
+            var existingClient = _database.Clients.FirstOrDefault(x => x.Id == response.ClientId);
             if (existingClient != null)
             {
                 response.Client = new ClientResponse(existingClient);
             }
-            var existingEmployee = Database.Employees.FirstOrDefault(x => x.Id == response.EmployeeId);
+            var existingEmployee = _database.Employees.FirstOrDefault(x => x.Id == response.EmployeeId);
             if (existingEmployee != null)
             {
                 response.Employee = new EmployeeResponse(existingEmployee);
@@ -109,22 +114,22 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingVisit = Database.Visits.FirstOrDefault(x => x.Id == visitCommand.Id);
+            var existingVisit = _database.Visits.FirstOrDefault(x => x.Id == visitCommand.Id);
             if (existingVisit != null)
             {
                 return BadRequest();
             }
-            var existingClient = Database.Clients.FirstOrDefault(x => x.Id == visitCommand.ClientId);
+            var existingClient = _database.Clients.FirstOrDefault(x => x.Id == visitCommand.ClientId);
             if (existingClient is null)
             {
                 return BadRequest();
             }
-            var existingEmployee = Database.Employees.FirstOrDefault(x => x.Id == visitCommand.EmployeeId);
+            var existingEmployee = _database.Employees.FirstOrDefault(x => x.Id == visitCommand.EmployeeId);
             if (existingEmployee is null)
             {
                 return BadRequest();
             }
-            Database.Visits.Add(visitCommand);
+            _database.Visits.Add(visitCommand);
             return Ok();
         }
 
@@ -139,13 +144,13 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingVisit = Database.Visits.FirstOrDefault(x => x.Id == visitCommand.Id);
+            var existingVisit = _database.Visits.FirstOrDefault(x => x.Id == visitCommand.Id);
             if (existingVisit is null)
             {
                 return BadRequest();
             }
-            var indexOfExistingVisit = Database.Visits.IndexOf(existingVisit);
-            Database.Visits[indexOfExistingVisit] = visitCommand;
+            var indexOfExistingVisit = _database.Visits.IndexOf(existingVisit);
+            _database.Visits[indexOfExistingVisit] = visitCommand;
             return Ok();
         }
 
@@ -156,12 +161,12 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingVisit = Database.Visits.FirstOrDefault(x => x.Id == id);
+            var existingVisit = _database.Visits.FirstOrDefault(x => x.Id == id);
             if (existingVisit is null)
             {
                 return BadRequest();
             }
-            Database.Visits.Remove(existingVisit);
+            _database.Visits.Remove(existingVisit);
             return Ok();
         }
 

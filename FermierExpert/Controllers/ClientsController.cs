@@ -11,28 +11,35 @@ namespace FermierExpert.Controllers
     [Route("api/[controller]")]
     public class ClientsController : Controller
     {
+        private readonly Database _database;
+
+        public ClientsController(Database database)
+        {
+            _database = database;
+        }
+
         [HttpGet]
         public IActionResult Get()
         {
             var clientsResponse = new ListaDubluInlantuita<ClientResponse>();
-            foreach (var client in Database.Clients)
+            foreach (var client in _database.Clients)
             {
                 var cropFields = new ListaDubluInlantuita<CropFieldResponse>();
-                foreach (var cropField in Database.CropFields
+                foreach (var cropField in _database.CropFields
                 .Where(x => x.ClientId == client.Id)
                 .Select(x => new CropFieldResponse(x)))
                 {
                     cropFields.Add(cropField);
                 }
                 var visits = new ListaDubluInlantuita<VisitResponse>();
-                foreach (var visit in Database.Visits
+                foreach (var visit in _database.Visits
                 .Where(x => x.ClientId == client.Id)
                 .Select(x => new VisitResponse(x)))
                 {
                     visits.Add(visit);
                 }
                 var stocks = new ListaDubluInlantuita<StockResponse>();
-                foreach (var stock in Database.Stocks
+                foreach (var stock in _database.Stocks
                 .Where(x => x.ClientId == client.Id)
                 .Select(x => new StockResponse(x)))
                 {
@@ -56,28 +63,28 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingClient = Database.Clients.FirstOrDefault(x => x.Id == id);
+            var existingClient = _database.Clients.FirstOrDefault(x => x.Id == id);
             if (existingClient is null)
             {
                 return BadRequest();
             }
 
             var cropFields = new ListaDubluInlantuita<CropFieldResponse>();
-            foreach (var cropField in Database.CropFields
+            foreach (var cropField in _database.CropFields
                 .Where(x => x.ClientId == id)
                 .Select(x => new CropFieldResponse(x)))
             {
                 cropFields.Add(cropField);
             }
             var visits = new ListaDubluInlantuita<VisitResponse>();
-            foreach (var visit in Database.Visits
+            foreach (var visit in _database.Visits
             .Where(x => x.ClientId == existingClient.Id)
             .Select(x => new VisitResponse(x)))
             {
                 visits.Add(visit);
             }
             var stocks = new ListaDubluInlantuita<StockResponse>();
-            foreach (var stock in Database.Stocks
+            foreach (var stock in _database.Stocks
             .Where(x => x.ClientId == existingClient.Id)
             .Select(x => new StockResponse(x)))
             {
@@ -100,26 +107,26 @@ namespace FermierExpert.Controllers
                 return BadRequest("Name is null");
             }
             var clientResponses = new ListaDubluInlantuita<ClientResponse>();
-            foreach (var client in Database.Clients
+            foreach (var client in _database.Clients
                 .Where(x=>x.FirstName.ToLower().Contains(name.ToLower()) || x.LastName.ToLower().Contains(name.ToLower()))
                 .Select(x=> new ClientResponse(x)))
             {
                 var cropFields = new ListaDubluInlantuita<CropFieldResponse>();
-                foreach (var cropField in Database.CropFields
+                foreach (var cropField in _database.CropFields
                     .Where(x => x.ClientId == client.Id)
                     .Select(x => new CropFieldResponse(x)))
                 {
                     cropFields.Add(cropField);
                 }
                 var visits = new ListaDubluInlantuita<VisitResponse>();
-                foreach (var visit in Database.Visits
+                foreach (var visit in _database.Visits
                 .Where(x => x.ClientId == client.Id)
                 .Select(x => new VisitResponse(x)))
                 {
                     visits.Add(visit);
                 }
                 var stocks = new ListaDubluInlantuita<StockResponse>();
-                foreach (var stock in Database.Stocks
+                foreach (var stock in _database.Stocks
                 .Where(x => x.ClientId == client.Id)
                 .Select(x => new StockResponse(x)))
                 {
@@ -147,12 +154,12 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var alreadyExistingClient = Database.Clients.FirstOrDefault(x => x.Id == clientCommand.Id);
+            var alreadyExistingClient = _database.Clients.FirstOrDefault(x => x.Id == clientCommand.Id);
             if (alreadyExistingClient != null)
             {
                 return BadRequest();
             }
-            Database.Clients.Add(clientCommand);
+            _database.Clients.Add(clientCommand);
             return Ok();
         }
 
@@ -167,13 +174,13 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingClient = Database.Clients.FirstOrDefault(x => x.Id == clientCommand.Id);
+            var existingClient = _database.Clients.FirstOrDefault(x => x.Id == clientCommand.Id);
             if (existingClient == null)
             {
                 return BadRequest();
             }
-            var indefOfExistingClient = Database.Clients.IndexOf(existingClient);
-            Database.Clients[indefOfExistingClient] = clientCommand;
+            var indefOfExistingClient = _database.Clients.IndexOf(existingClient);
+            _database.Clients[indefOfExistingClient] = clientCommand;
             return Ok();
         }
 
@@ -184,12 +191,12 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
-            var existingClient = Database.Clients.FirstOrDefault(x => x.Id == id);
+            var existingClient = _database.Clients.FirstOrDefault(x => x.Id == id);
             if (existingClient is null)
             {
                 return BadRequest();
             }
-            Database.Clients.Remove(existingClient);
+            _database.Clients.Remove(existingClient);
             return Ok();
         }
     }
