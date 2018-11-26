@@ -149,6 +149,10 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest("Invalid phone number");
             }
+            if (!_emailValidator.IsEmailValid(employeeCommand.Email))
+            {
+                return BadRequest("Email is invalid.");
+            }
             var indefOfExistingEmployee = _database.Employees.IndexOf(existingEmployee);
             _database.Employees[indefOfExistingEmployee] = employeeCommand;
             return Ok();
