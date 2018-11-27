@@ -60,6 +60,15 @@ namespace FermierExpert.Tests
             var response = await controller.Add(employee);
             Assert.IsType<BadRequestObjectResult>(response);
         }
+
+        [Fact]
+        public async Task Add_Should_Return_Ok()
+        {
+            var controller = new EmployeesController(new Database { Employees = new ListaDubluInlantuita<Employee> { new Employee { Id = 1 } } }, new RegexPhoneNumberValidator(), new RegexEmailAddressValidator());
+            var employee = new EmployeeCommand { Id = 2, Phone = "+40730151058", Email = "dsads@adsa.ro" };
+            var response = await controller.Add(employee);
+            Assert.IsType<OkResult>(response);
+        }
         #endregion
 
         #region Update
@@ -105,6 +114,15 @@ namespace FermierExpert.Tests
             var employee = new EmployeeCommand { Id = 1, Phone = "073dsds0151058", Email = "dsadsadsa" };
             var response = await controller.Update(employee);
             Assert.IsType<BadRequestObjectResult>(response);
+        }
+
+        [Fact]
+        public async Task Update_Should_Return_Ok()
+        {
+            var controller = new EmployeesController(new Database { Employees = new ListaDubluInlantuita<Employee> { new Employee { Id = 1 } } }, new RegexPhoneNumberValidator(), new RegexEmailAddressValidator());
+            var employee = new EmployeeCommand { Id = 1, Phone = "+40730151058", Email = "dsads@adsa.ro" };
+            var response = await controller.Update(employee);
+            Assert.IsType<OkResult>(response);
         }
         #endregion
     }
