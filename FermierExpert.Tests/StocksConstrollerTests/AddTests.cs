@@ -13,7 +13,7 @@ namespace FermierExpert.Tests.StocksConstrollerTests
             var controller = new StocksController(MockDatabase.CreateNewDatabase());
             var response = controller.Add(null);
             Assert.IsType<BadRequestResult>(response);
-        }
+        } 
 
         [Fact]
         public void Add_Should_Return_Bad_Request_On_Invalid_Id()
