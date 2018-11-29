@@ -8,11 +8,11 @@ using System.Linq;
 namespace FermierExpert.Controllers
 {
     [Route("api/[controller]")]
-    public class CropFieldController : Controller
+    public class CropFieldsController : Controller
     {
         private readonly Database _database;
 
-        public CropFieldController(Database database)
+        public CropFieldsController(Database database)
         {
             _database = database;
         }
@@ -90,6 +90,11 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
+            var alreadyExistingCrop = _database.Crops.FirstOrDefault(x => x.Id == cropFieldCommand.CropId);
+            if (alreadyExistingCrop is null)
+            {
+                return BadRequest();
+            }
             var existingClient = _database.Clients.FirstOrDefault(x => x.Id == cropFieldCommand.ClientId);
             if (existingClient is null)
             {
@@ -117,6 +122,16 @@ namespace FermierExpert.Controllers
             }
             var existingCropField = _database.CropFields.FirstOrDefault(x => x.Id == cropFieldCommand.Id);
             if (existingCropField is null)
+            {
+                return BadRequest();
+            }
+            var alreadyExistingCrop = _database.Crops.FirstOrDefault(x => x.Id == cropFieldCommand.CropId);
+            if (alreadyExistingCrop is null)
+            {
+                return BadRequest();
+            }
+            var existingClient = _database.Clients.FirstOrDefault(x => x.Id == cropFieldCommand.ClientId);
+            if (existingClient is null)
             {
                 return BadRequest();
             }
