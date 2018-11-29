@@ -149,6 +149,16 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
+            var existingClient = _database.Clients.FirstOrDefault(x => x.Id == visitCommand.ClientId);
+            if (existingClient is null)
+            {
+                return BadRequest();
+            }
+            var existingEmployee = _database.Employees.FirstOrDefault(x => x.Id == visitCommand.EmployeeId);
+            if (existingEmployee is null)
+            {
+                return BadRequest();
+            }
             var indexOfExistingVisit = _database.Visits.IndexOf(existingVisit);
             _database.Visits[indexOfExistingVisit] = visitCommand;
             return Ok();
