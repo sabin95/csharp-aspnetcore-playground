@@ -25,7 +25,12 @@ namespace FermierExpert.Tests.EmployeesControllerTests
             {
                 Id = 0
             });
+            var response2 = await controller.Update(new Commands.EmployeeCommand
+            {
+                Id = -5
+            });
             Assert.IsType<BadRequestResult>(response);
+            Assert.IsType<BadRequestResult>(response2);
         }
         [Fact]
         public async Task Update_Should_Return_Bad_Request_On_NonExisting_Employee()

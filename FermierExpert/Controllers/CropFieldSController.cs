@@ -11,7 +11,7 @@ namespace FermierExpert.Controllers
     public class CropFieldsController : Controller
     {
         private readonly Database _database;
-
+            
         public CropFieldsController(Database database)
         {
             _database = database;
@@ -85,6 +85,10 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
+            if (cropFieldCommand.CropId <= 0)
+            {
+                return BadRequest();
+            }
             var alreadyExistingCropField = _database.CropFields.FirstOrDefault(x => x.Id == cropFieldCommand.Id);
             if (alreadyExistingCropField != null)
             {
@@ -117,6 +121,10 @@ namespace FermierExpert.Controllers
                 return BadRequest();
             }
             if (cropFieldCommand.ClientId <= 0)
+            {
+                return BadRequest();
+            }
+            if (cropFieldCommand.CropId <= 0)
             {
                 return BadRequest();
             }

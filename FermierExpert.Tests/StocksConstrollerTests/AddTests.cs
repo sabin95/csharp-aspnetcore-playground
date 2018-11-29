@@ -25,7 +25,38 @@ namespace FermierExpert.Tests.StocksConstrollerTests
                 ProductId = 1,
                 ClientId = 1
             });
+            var response2 = controller.Add(new Commands.StockCommand
+            {
+                Id = -4,
+                ProductId = 1,
+                ClientId = 1
+            });
             Assert.IsType<BadRequestResult>(response);
+            Assert.IsType<BadRequestResult>(response2);
+        }
+
+        [Fact]
+        public void Add_Should_Return_Bad_Request_On_Invalid_ClientId()
+        {
+            var controller = new StocksController(MockDatabase.CreateNewDatabase());
+            var stock = new StockCommand { Id = 1, ProductId = 1, ClientId = 0 };
+            var stock2 = new StockCommand { Id = 1, ProductId = 1, ClientId = -5 };
+            var response = controller.Add(stock);
+            var response2 = controller.Add(stock2);
+            Assert.IsType<BadRequestResult>(response);
+            Assert.IsType<BadRequestResult>(response2);
+        }
+
+        [Fact]
+        public void Add_Should_Return_Bad_Request_On_Invalid_ProductId()
+        {
+            var controller = new StocksController(MockDatabase.CreateNewDatabase());
+            var stock = new StockCommand { Id = 1, ProductId = 0, ClientId = 1 };
+            var stock2 = new StockCommand { Id = 1, ProductId = -5, ClientId = 1 };
+            var response = controller.Add(stock);
+            var response2 = controller.Add(stock2);
+            Assert.IsType<BadRequestResult>(response);
+            Assert.IsType<BadRequestResult>(response2);
         }
 
         [Fact]

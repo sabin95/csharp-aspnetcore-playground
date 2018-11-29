@@ -25,7 +25,38 @@ namespace FermierExpert.Tests.VisitsControllerTests
                 EmployeeId = 1,
                 ClientId = 1
             });
+            var response2 = controller.Add(new Commands.VisitCommand
+            {
+                Id = -4,
+                EmployeeId = 1,
+                ClientId = 1
+            });
             Assert.IsType<BadRequestResult>(response);
+            Assert.IsType<BadRequestResult>(response2);
+        }
+
+        [Fact]
+        public void Add_Should_Return_Bad_Request_On_Invalid_EmployeeId()
+        {
+            var controller = new VisitsController(MockDatabase.CreateNewDatabase());
+            var visit = new VisitCommand { Id = 1, EmployeeId = 0, ClientId = 1 };
+            var visit2 = new VisitCommand { Id = 1, EmployeeId = -5, ClientId = 1 };
+            var response = controller.Add(visit);
+            var response2 = controller.Add(visit2);
+            Assert.IsType<BadRequestResult>(response);
+            Assert.IsType<BadRequestResult>(response2);
+        }
+
+        [Fact]
+        public void Add_Should_Return_Bad_Request_On_Invalid_ClientId()
+        {
+            var controller = new VisitsController(MockDatabase.CreateNewDatabase());
+            var visit = new VisitCommand { Id = 1, EmployeeId = 1, ClientId = 0 };
+            var visit2 = new VisitCommand { Id = 1, EmployeeId = 1, ClientId = -5 };
+            var response = controller.Add(visit);
+            var response2 = controller.Add(visit2);
+            Assert.IsType<BadRequestResult>(response);
+            Assert.IsType<BadRequestResult>(response2);
         }
 
         [Fact]

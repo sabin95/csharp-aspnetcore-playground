@@ -24,8 +24,27 @@ namespace FermierExpert.Tests.ProductsControllerTests
                 Id = 0,
                 CompanyId = 1
             });
+            var response2 = controller.Update(new Commands.ProductCommand
+            {
+                Id = -5,
+                CompanyId = 1
+            });
             Assert.IsType<BadRequestResult>(response);
+            Assert.IsType<BadRequestResult>(response2);
         }
+
+        [Fact]
+        public void Update_Should_Return_Bad_Request_On_Invalid_Company_Id()
+        {
+            var controller = new ProductsController(MockDatabase.CreateNewDatabase());
+            var product = new ProductCommand { Id = 1, CompanyId = 0 };
+            var product2 = new ProductCommand { Id = 1, CompanyId = -4 };
+            var response = controller.Update(product);
+            var response2 = controller.Update(product2);
+            Assert.IsType<BadRequestResult>(response);
+            Assert.IsType<BadRequestResult>(response2);
+        }
+
         [Fact]
         public void Update_Should_Return_Bad_Request_On_NonExisting_Product()
         {

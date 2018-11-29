@@ -16,28 +16,22 @@ namespace FermierExpert.Tests.CompaniesControllerTests
         }
 
         [Fact]
-        public void Update_Should_Return_Bad_Request_On_id_value0()
+        public void Update_Should_Return_Bad_Request_On_Invalid_Id()
         {
             var controller = new CompaniesController(MockDatabase.CreateNewDatabase());
             var response = controller.Update(new Commands.CompanyCommand
             {
                 Id = 0
             });
-            Assert.IsType<BadRequestResult>(response);
-        }
-
-        [Fact]
-        public void Update_Should_Return_Bad_Request_On_Invalid_Id()
-        {
-            var controller = new CompaniesController(MockDatabase.CreateNewDatabase());
-            var response = controller.Update(new Commands.CompanyCommand
+            var response2 = controller.Update(new Commands.CompanyCommand
             {
                 Id = -4
             });
             Assert.IsType<BadRequestResult>(response);
+            Assert.IsType<BadRequestResult>(response2);
         }
 
-
+      
         [Fact]
         public void Update_Should_Return_Bad_Request_On_NonExisting_Company()
         {

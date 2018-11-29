@@ -25,7 +25,14 @@ namespace FermierExpert.Tests.CropFieldsControllerTests
                 ClientId = 1,
                 CropId = 1
             });
+            var response2 = controller.AddCropField(new Commands.CropFieldCommand
+            {
+                Id = -5,
+                ClientId = 1,
+                CropId = 1
+            });
             Assert.IsType<BadRequestResult>(response);
+            Assert.IsType<BadRequestResult>(response2);
         }
 
         [Fact]
@@ -33,8 +40,11 @@ namespace FermierExpert.Tests.CropFieldsControllerTests
         {
             var controller = new CropFieldsController(MockDatabase.CreateNewDatabase());
             var cropField = new CropFieldCommand { Id = 1, ClientId = 0, CropId = 1 };
+            var cropField2 = new CropFieldCommand { Id = 1, ClientId = -4, CropId = 1 };
             var response = controller.AddCropField(cropField);
+            var response2 = controller.AddCropField(cropField2);
             Assert.IsType<BadRequestResult>(response);
+            Assert.IsType<BadRequestResult>(response2);
         }
 
         [Fact]
@@ -42,6 +52,27 @@ namespace FermierExpert.Tests.CropFieldsControllerTests
         {
             var controller = new CropFieldsController(MockDatabase.CreateNewDatabase());
             var cropField = new CropFieldCommand { Id = 1, ClientId = 1, CropId = 0 };
+            var cropField2 = new CropFieldCommand { Id = 1, ClientId = 1, CropId = -5 };
+            var response = controller.AddCropField(cropField);
+            var response2 = controller.AddCropField(cropField2);
+            Assert.IsType<BadRequestResult>(response);
+            Assert.IsType<BadRequestResult>(response2);
+        }
+
+        [Fact]
+        public void Add_Should_Return_Bad_Request_On_Non_Existing_Crop()
+        {
+            var controller = new CropFieldsController(MockDatabase.CreateNewDatabase());
+            var cropField = new CropFieldCommand { Id = 1, ClientId = 1, CropId = 8 };
+            var response = controller.AddCropField(cropField);
+            Assert.IsType<BadRequestResult>(response);
+        }
+
+        [Fact]
+        public void Add_Should_Return_Bad_Request_On_Non_Existing_Client()
+        {
+            var controller = new CropFieldsController(MockDatabase.CreateNewDatabase());
+            var cropField = new CropFieldCommand { Id = 1, ClientId = 8, CropId = 1 };
             var response = controller.AddCropField(cropField);
             Assert.IsType<BadRequestResult>(response);
         }

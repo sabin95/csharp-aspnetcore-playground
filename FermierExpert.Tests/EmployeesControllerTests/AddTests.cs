@@ -25,7 +25,12 @@ namespace FermierExpert.Tests.EmployeesControllerTests
             {
                 Id = 0
             });
+            var response2 = await controller.Add(new Commands.EmployeeCommand
+            {
+                Id = -4
+            });
             Assert.IsType<BadRequestResult>(response);
+            Assert.IsType<BadRequestResult>(response2);
         }
 
         [Fact]
