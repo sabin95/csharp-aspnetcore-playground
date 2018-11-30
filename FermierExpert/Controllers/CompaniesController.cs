@@ -14,9 +14,9 @@ namespace FermierExpert.Controllers
     public class CompaniesController : ControllerBase
     {
         private readonly Database _database;
-        private readonly IRapidApiCountryValidator _countryValidator;
+        private readonly ICountryValidator _countryValidator;
 
-        public CompaniesController(Database database, IRapidApiCountryValidator countryValidator)
+        public CompaniesController(Database database, ICountryValidator countryValidator)
         {
             _database = database;
             _countryValidator = countryValidator;

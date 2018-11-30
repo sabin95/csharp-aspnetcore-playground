@@ -40,7 +40,7 @@ namespace FermierExpert
             services.AddSingleton<Database>();
             services.AddTransient<IPhoneNumberValidator, RegexPhoneNumberValidator>();
             services.AddTransient<IEmailAddressValidator, RegexEmailAddressValidator>();
-            services.AddTransient<IRapidApiCountryValidator, RapidApiCountryValidator>();
+            services.AddTransient<ICountryValidator, RapidApiCountryValidator>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, Database database)

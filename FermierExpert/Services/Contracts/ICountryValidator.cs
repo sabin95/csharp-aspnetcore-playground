@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FermierExpert.Services.Contracts
 {
-    public interface IRapidApiCountryValidator
+    public interface ICountryValidator
     {
         Task<RapidApiCountryResult[]> SearchCountry(string countryName);
     }

@@ -44,6 +44,7 @@ namespace FermierExpert.Tests.CompaniesControllerTests
                 Id = 0,
                 Country = "dsfsdf"
             });
+            Assert.IsType<BadRequestResult>(response);
         }
 
         [Fact]

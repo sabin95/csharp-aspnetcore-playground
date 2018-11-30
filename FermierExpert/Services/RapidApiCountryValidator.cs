@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FermierExpert.Services
 {
-    public class RapidApiCountryValidator : IRapidApiCountryValidator
+    public class RapidApiCountryValidator : ICountryValidator
     {
         public async Task<RapidApiCountryResult[]> SearchCountry(string countryName)
         {
