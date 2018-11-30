@@ -1,7 +1,9 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using FermierExpert.Commands;
 using FermierExpert.Data;
 using FermierExpert.Responses;
+using FermierExpert.Services.Contracts;
 using ListaDubluInlantuita;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,10 +14,12 @@ namespace FermierExpert.Controllers
     public class CompaniesController : ControllerBase
     {
         private readonly Database _database;
+        private readonly ICountryValidator _countryValidator;
 
-        public CompaniesController(Database database)
+        public CompaniesController(Database database, ICountryValidator countryValidator)
         {
             _database = database;
+            _countryValidator = countryValidator;
         }
         [HttpGet]
         public IActionResult Get()
@@ -67,7 +71,7 @@ namespace FermierExpert.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add([FromBody] CompanyCommand companyCommand)
+        public async Task<IActionResult> Add([FromBody] CompanyCommand companyCommand)
         {
             if (companyCommand is null)
             {
@@ -77,6 +81,12 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
+            var countryList = await _countryValidator.SearchCountry(companyCommand.Country);
+            if (countryList.Length != 1)
+            {
+                return BadRequest();
+            }
+            companyCommand.Country = countryList.FirstOrDefault().Name;
             var existingCompany = _database.Companies.FirstOrDefault(x => x.Id == companyCommand.Id);
             if (existingCompany != null)
             {
@@ -87,23 +97,29 @@ namespace FermierExpert.Controllers
         }
 
         [HttpPut]
-        public IActionResult Update([FromBody] CompanyCommand company)
+        public async Task<IActionResult> Update([FromBody] CompanyCommand companyCommand)
         {
-            if (company is null)
+            if (companyCommand is null)
             {
                 return BadRequest();
             }
-            if (company.Id <= 0)
+            if (companyCommand.Id <= 0)
             {
                 return BadRequest();
             }
-            var existingCompany = _database.Companies.FirstOrDefault(x => x.Id == company.Id);
+            var countryList = await _countryValidator.SearchCountry(companyCommand.Country);
+            if (countryList.Length != 1)
+            {
+                return BadRequest();
+            }
+            companyCommand.Country = countryList.FirstOrDefault().Name;
+            var existingCompany = _database.Companies.FirstOrDefault(x => x.Id == companyCommand.Id);
             if (existingCompany is null)
             {
                 return BadRequest();
             }
             var indexOfExistingCompany = _database.Companies.IndexOf(existingCompany);
-            _database.Companies[indexOfExistingCompany] = company;
+            _database.Companies[indexOfExistingCompany] = companyCommand;
             return Ok();
         }
 
