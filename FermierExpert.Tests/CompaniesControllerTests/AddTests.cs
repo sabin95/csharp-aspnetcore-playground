@@ -1,6 +1,8 @@
 ﻿using FermierExpert.Commands;
 using FermierExpert.Controllers;
+using FermierExpert.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FermierExpert.Tests.CompaniesControllerTests
@@ -8,45 +10,58 @@ namespace FermierExpert.Tests.CompaniesControllerTests
     public class AddTests
     {
         [Fact]
-        public void Add_Should_Return_Bad_Request_On_Null_Commnad()
+        public async Task Add_Should_Return_Bad_Request_On_Null_Commnad()
         {
-            var controller = new CompaniesController(MockDatabase.CreateNewDatabase());
-            var response = controller.Add(null);
+            var controller = new CompaniesController(MockDatabase.CreateNewDatabase(), new RapidApiCountryValidator());
+            var response = await controller.Add(null);
             Assert.IsType<BadRequestResult>(response);
         }
 
         [Fact]
-        public void Add_Should_Return_Bad_Request_On_Invalid_id()
+        public async Task Add_Should_Return_Bad_Request_On_Invalid_id()
         {
-            var controller = new CompaniesController(MockDatabase.CreateNewDatabase());
-            var response = controller.Add(new Commands.CompanyCommand
+            var controller = new CompaniesController(MockDatabase.CreateNewDatabase(), new RapidApiCountryValidator());
+            var response = await controller.Add(new Commands.CompanyCommand
             {
-                Id = 0
+                Id = 0,
+                Country = "romania"
             });
-            var response2 = controller.Add(new Commands.CompanyCommand
+            var response2 = await controller.Add(new Commands.CompanyCommand
             {
-                Id = -4
+                Id = -4,
+                Country = "romania"
             });
             Assert.IsType<BadRequestResult>(response);
             Assert.IsType<BadRequestResult>(response2);
         }
 
         [Fact]
-        public void Add_Should_Return_Bad_Request_On_Existing_Company()
+        public async Task Add_Should_Return_Bad_Request_On_Invalid_Country()
         {
-            var controller = new CompaniesController(MockDatabase.CreateNewDatabase());
-            var company = new CompanyCommand { Id = 1 };
-            var response = controller.Add(company);
+            var controller = new CompaniesController(MockDatabase.CreateNewDatabase(), new RapidApiCountryValidator());
+            var response = await controller.Add(new Commands.CompanyCommand
+            {
+                Id = 0,
+                Country = "dsfsdf"
+            });
+        }
+
+        [Fact]
+        public async Task Add_Should_Return_Bad_Request_On_Existing_Company()
+        {
+            var controller = new CompaniesController(MockDatabase.CreateNewDatabase(), new RapidApiCountryValidator());
+            var company = new CompanyCommand { Id = 1, Country = "romania" };
+            var response = await controller.Add(company);
             Assert.IsType<BadRequestResult>(response);
         }
 
 
         [Fact]
-        public void Add_Should_Return_Ok()
+        public async Task Add_Should_Return_Ok()
         {
-            var controller = new CompaniesController(MockDatabase.CreateNewDatabase());
-            var company = new CompanyCommand { Id = 2 };
-            var response = controller.Add(company);
+            var controller = new CompaniesController(MockDatabase.CreateNewDatabase(), new RapidApiCountryValidator());
+            var company = new CompanyCommand { Id = 2, Country = "romania" };
+            var response = await controller.Add(company);
             Assert.IsType<OkResult>(response);
         }
     }
