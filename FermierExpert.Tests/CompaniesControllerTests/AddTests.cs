@@ -12,7 +12,7 @@ namespace FermierExpert.Tests.CompaniesControllerTests
         [Fact]
         public async Task Add_Should_Return_Bad_Request_On_Null_Commnad()
         {
-            var controller = new CompaniesController(MockDatabase.CreateNewDatabase(), new RapidApiCountryValidator());
+            var controller = new CompaniesController(MockDatabaseFactory.CreateNewDatabase(), new RapidApiCountryValidator());
             var response = await controller.Add(null);
             Assert.IsType<BadRequestResult>(response);
         }
@@ -20,7 +20,7 @@ namespace FermierExpert.Tests.CompaniesControllerTests
         [Fact]
         public async Task Add_Should_Return_Bad_Request_On_Invalid_id()
         {
-            var controller = new CompaniesController(MockDatabase.CreateNewDatabase(), new RapidApiCountryValidator());
+            var controller = new CompaniesController(MockDatabaseFactory.CreateNewDatabase(), new RapidApiCountryValidator());
             var response = await controller.Add(new Commands.CompanyCommand
             {
                 Id = 0,
@@ -38,7 +38,7 @@ namespace FermierExpert.Tests.CompaniesControllerTests
         [Fact]
         public async Task Add_Should_Return_Bad_Request_On_Invalid_Country()
         {
-            var controller = new CompaniesController(MockDatabase.CreateNewDatabase(), new RapidApiCountryValidator());
+            var controller = new CompaniesController(MockDatabaseFactory.CreateNewDatabase(), new RapidApiCountryValidator());
             var response = await controller.Add(new Commands.CompanyCommand
             {
                 Id = 0,
@@ -50,7 +50,7 @@ namespace FermierExpert.Tests.CompaniesControllerTests
         [Fact]
         public async Task Add_Should_Return_Bad_Request_On_Existing_Company()
         {
-            var controller = new CompaniesController(MockDatabase.CreateNewDatabase(), new RapidApiCountryValidator());
+            var controller = new CompaniesController(MockDatabaseFactory.CreateNewDatabase(), new RapidApiCountryValidator());
             var company = new CompanyCommand { Id = 1, Country = "romania" };
             var response = await controller.Add(company);
             Assert.IsType<BadRequestResult>(response);
@@ -60,7 +60,7 @@ namespace FermierExpert.Tests.CompaniesControllerTests
         [Fact]
         public async Task Add_Should_Return_Ok()
         {
-            var controller = new CompaniesController(MockDatabase.CreateNewDatabase(), new RapidApiCountryValidator());
+            var controller = new CompaniesController(MockDatabaseFactory.CreateNewDatabase(), new RapidApiCountryValidator());
             var company = new CompanyCommand { Id = 2, Country = "romania" };
             var response = await controller.Add(company);
             Assert.IsType<OkResult>(response);

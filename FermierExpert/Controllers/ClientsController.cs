@@ -1,9 +1,13 @@
 ﻿using FermierExpert.Commands;
 using FermierExpert.Data;
+using FermierExpert.Helpers;
+using FermierExpert.Models;
+using FermierExpert.Queries;
 using FermierExpert.Responses;
 using ListaDubluInlantuita;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace FermierExpert.Controllers
@@ -18,11 +22,17 @@ namespace FermierExpert.Controllers
             _database = database;
         }
 
+
+
         [HttpGet]
-        public IActionResult Get()
+        public IEnumerable<ClientResponse> GetAll([FromBody] GetAllClientsQuery query)
         {
             var clientsResponse = new ListaDubluInlantuita<ClientResponse>();
-            foreach (var client in _database.Clients)
+            var sortedList = _database.Clients.OrderByColumns(query.SortColumns)
+                .Skip(query.Start)
+                .Take(query.Count);
+
+            foreach (var client in sortedList)
             {
                 var cropFields = new ListaDubluInlantuita<CropFieldResponse>();
                 foreach (var cropField in _database.CropFields
@@ -53,7 +63,8 @@ namespace FermierExpert.Controllers
                 };
                 clientsResponse.Add(response);
             }
-            return Ok(clientsResponse);
+            //return Ok(clientsResponse);
+            return clientsResponse;
         }
 
         [HttpGet("{id}")]
@@ -108,8 +119,8 @@ namespace FermierExpert.Controllers
             }
             var clientResponses = new ListaDubluInlantuita<ClientResponse>();
             foreach (var client in _database.Clients
-                .Where(x=>x.FirstName.ToLower().Contains(name.ToLower()) || x.LastName.ToLower().Contains(name.ToLower()))
-                .Select(x=> new ClientResponse(x)))
+                .Where(x => x.FirstName.ToLower().Contains(name.ToLower()) || x.LastName.ToLower().Contains(name.ToLower()))
+                .Select(x => new ClientResponse(x)))
             {
                 var cropFields = new ListaDubluInlantuita<CropFieldResponse>();
                 foreach (var cropField in _database.CropFields
