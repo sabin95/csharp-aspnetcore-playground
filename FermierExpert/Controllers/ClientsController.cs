@@ -1,9 +1,9 @@
 ﻿using FermierExpert.Commands;
 using FermierExpert.Data;
-using FermierExpert.Helpers;
-using FermierExpert.Models;
 using FermierExpert.Queries;
 using FermierExpert.Responses;
+using FermierExpert.Services;
+using FermierExpert.Services.Contracts;
 using ListaDubluInlantuita;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,21 +16,26 @@ namespace FermierExpert.Controllers
     public class ClientsController : Controller
     {
         private readonly Database _database;
+        private readonly IQueryHelper _queryExtensions;
 
-        public ClientsController(Database database)
+        public ClientsController(Database database, IQueryHelper queryExtensions)
         {
             _database = database;
+            _queryExtensions = queryExtensions;
         }
 
 
 
         [HttpGet]
-        public IEnumerable<ClientResponse> GetAll([FromBody] GetAllClientsQuery query)
+        public IEnumerable<ClientResponse> GetAll(GetAllClientsQuery query)
         {
+
             var clientsResponse = new ListaDubluInlantuita<ClientResponse>();
-            var sortedList = _database.Clients.OrderByColumns(query.SortColumns)
-                .Skip(query.Start)
-                .Take(query.Count);
+            var filteredList = _queryExtensions.WhereByColumns(_database.Clients, query.Client);
+            var orderedList = _queryExtensions
+                .OrderByColumns(filteredList, query.SortColumns);                
+            var sortedList = _queryExtensions.Slice(orderedList, query.Start, query.Count);
+
 
             foreach (var client in sortedList)
             {
