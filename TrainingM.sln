@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FermierExpert.Tests", "FermierExpert.Tests\FermierExpert.Tests.csproj", "{4AC6967A-EB4D-4ED5-98B0-B85AE981189C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FermierExpert.Tests", "FermierExpert.Tests\FermierExpert.Tests.csproj", "{4AC6967A-EB4D-4ED5-98B0-B85AE981189C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

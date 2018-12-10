@@ -48,6 +48,7 @@ namespace FermierExpert
             services.AddTransient<IComparer<long>, LongComparer>();
             services.AddTransient<IComparer<Guid>, GuidComparer>();
             services.AddTransient<IComparer<DateTime>, DateTimeComparer>();
+            services.AddTransient<IComparer<Enum>, EnumComparer>();
             services.AddTransient<IQueryHelper, QueryHelper>();
 
         }

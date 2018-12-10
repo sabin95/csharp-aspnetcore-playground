@@ -33,7 +33,7 @@ namespace FermierExpert.Controllers
             var clientsResponse = new ListaDubluInlantuita<ClientResponse>();
             var filteredList = _queryExtensions.WhereByColumns(_database.Clients, query.Client);
             var orderedList = _queryExtensions
-                .OrderByColumns(filteredList, query.SortColumns);                
+                .OrderByColumns(filteredList, query.SortColumns);
             var sortedList = _queryExtensions.Slice(orderedList, query.Start, query.Count);
 
 

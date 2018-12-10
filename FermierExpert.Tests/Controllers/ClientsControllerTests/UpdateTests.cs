@@ -10,7 +10,7 @@ namespace FermierExpert.Tests.ClientsControllerTests
         [Fact]
         public void Update_Should_Return_Bad_Request_On_Null_Commnad()
         {
-            var controller = new ClientsController(MockDatabaseFactory.CreateNewDatabase());
+            var controller = new ClientsController(MockDatabaseFactory.Create(), new MockQueryHelper());
             var response = controller.Update(null);
             Assert.IsType<BadRequestResult>(response);
         }
@@ -18,7 +18,7 @@ namespace FermierExpert.Tests.ClientsControllerTests
         [Fact]
         public void Update_Should_Return_Bad_Request_On_Invalid_id()
         {
-            var controller = new ClientsController(MockDatabaseFactory.CreateNewDatabase());
+            var controller = new ClientsController(MockDatabaseFactory.Create(), new MockQueryHelper());
             var response = controller.Update(new Commands.ClientCommand
             {
                 Id = 0
@@ -36,7 +36,7 @@ namespace FermierExpert.Tests.ClientsControllerTests
         [Fact]
         public void Update_Should_Return_Bad_Request_On_NonExisting_Client()
         {
-            var controller = new ClientsController(MockDatabaseFactory.CreateNewDatabase());
+            var controller = new ClientsController(MockDatabaseFactory.Create(), new MockQueryHelper());
             var clientToAdd = new ClientCommand { Id = 200 };
             var response = controller.Update(clientToAdd);
             Assert.IsType<BadRequestResult>(response);
@@ -45,7 +45,7 @@ namespace FermierExpert.Tests.ClientsControllerTests
         [Fact]
         public void Update_Should_Return_Ok()
         {
-            var controller = new ClientsController(MockDatabaseFactory.CreateNewDatabase());
+            var controller = new ClientsController(MockDatabaseFactory.Create(), new MockQueryHelper());
             var client = new ClientCommand { Id = 1 };
             var response = controller.Update(client);
             Assert.IsType<OkResult>(response);
