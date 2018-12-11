@@ -1,6 +1,8 @@
 ﻿using FermierExpert.Commands;
 using FermierExpert.Data;
+using FermierExpert.Queries;
 using FermierExpert.Responses;
+using FermierExpert.Services.Contracts;
 using ListaDubluInlantuita;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
@@ -11,13 +13,15 @@ namespace FermierExpert.Controllers
     public class CropFieldsController : Controller
     {
         private readonly Database _database;
-            
-        public CropFieldsController(Database database)
+        private readonly IQueryHelper _queryExtensions;
+
+        public CropFieldsController(Database database, IQueryHelper queryExtensions)
         {
             _database = database;
+            _queryExtensions = queryExtensions;
         }
         [HttpGet("client/{clientId}")]
-        public IActionResult GetCropFieldsOfClient(int clientId)
+        public IActionResult GetCropFieldsOfClient(int clientId, GetAllBaseQuery<CropFieldCommand> query)
         {
             if (clientId <= 0)
             {
@@ -29,7 +33,12 @@ namespace FermierExpert.Controllers
                 return BadRequest();
             }
             var cropFieldResponse = new ListaDubluInlantuita<CropFieldResponse>();
-            foreach (var cropField in _database.CropFields
+            var filteredList = _queryExtensions.WhereByColumns(_database.CropFields, query.FilterPayload);
+            var orderedList = _queryExtensions
+                .OrderByColumns(filteredList, query.SortColumns);
+            var sortedList = _queryExtensions.Slice(orderedList, query.Start, query.Count);
+
+            foreach (var cropField in sortedList
                 .Where(x => x.ClientId == existingClient.Id)
                 .Select(x => new CropFieldResponse(x)))
             {

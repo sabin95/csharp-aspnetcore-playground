@@ -1,24 +1,27 @@
 ﻿using System.Linq;
 using FermierExpert.Commands;
 using FermierExpert.Data;
+using FermierExpert.Queries;
 using FermierExpert.Responses;
+using FermierExpert.Services.Contracts;
 using ListaDubluInlantuita;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FermierExpert.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
     public class ProductsController : ControllerBase
     {
         private readonly Database _database;
+        private readonly IQueryHelper _queryExtensions;
 
-        public ProductsController(Database database)
+        public ProductsController(Database database, IQueryHelper queryExtension)
         {
             _database = database;
+            _queryExtensions = queryExtension;
         }
         [HttpGet("company/{companyId}")]
-        public IActionResult GetProductByCompanyId(int companyId)
+        public IActionResult GetProductByCompanyId(int companyId, GetAllBaseQuery<ProductCommand> query)
         {
             if (companyId <= 0)
             {
@@ -30,7 +33,11 @@ namespace FermierExpert.Controllers
                 return BadRequest();
             }
             var productsResponse = new ListaDubluInlantuita<ProductResponse>();
-            foreach (var product in _database.Products
+            var filteredList = _queryExtensions.WhereByColumns(_database.Products, query.FilterPayload);
+            var orderedList = _queryExtensions
+                .OrderByColumns(filteredList, query.SortColumns);
+            var sortedList = _queryExtensions.Slice(orderedList, query.Start, query.Count);
+            foreach (var product in sortedList
                 .Where(x => x.CompanyId == existingCompany.Id)
                 .Select(x => new ProductResponse(x)))
             {

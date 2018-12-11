@@ -1,28 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using FermierExpert.Commands;
 using FermierExpert.Data;
-using FermierExpert.Models;
+using FermierExpert.Queries;
 using FermierExpert.Responses;
+using FermierExpert.Services.Contracts;
 using ListaDubluInlantuita;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FermierExpert.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
     public class VisitsController : ControllerBase
     {
         private Database _database;
-        public VisitsController(Database database)
+        private readonly IQueryHelper _queryExtensions;
+        public VisitsController(Database database, IQueryHelper queryExtension)
         {
             _database = database;
+            _queryExtensions = queryExtension;
         }
         [HttpGet("client/{clientId}")]
-        public IActionResult GetVisitsByClient(int clientId)
+        public IActionResult GetVisitsByClient(int clientId, GetAllBaseQuery<VisitCommand> query)
         {
             if (clientId <= 0)
             {
@@ -34,7 +32,11 @@ namespace FermierExpert.Controllers
                 return BadRequest();
             }
             var visitsResponse = new ListaDubluInlantuita<VisitResponse>();
-            foreach (var visit in _database.Visits
+            var filteredList = _queryExtensions.WhereByColumns(_database.Visits, query.FilterPayload);
+            var orderedList = _queryExtensions
+                .OrderByColumns(filteredList, query.SortColumns);
+            var sortedList = _queryExtensions.Slice(orderedList, query.Start, query.Count);
+            foreach (var visit in sortedList
                 .Where(x => x.ClientId == existingClient.Id)
                 .Select(x => new VisitResponse(x)))
             {
@@ -50,7 +52,7 @@ namespace FermierExpert.Controllers
         }
 
         [HttpGet("employee/{employeeId}")]
-        public IActionResult GetVisitsByEmployee(int employeeId)
+        public IActionResult GetVisitsByEmployee(int employeeId, GetAllBaseQuery<VisitCommand> query)
         {
             if (employeeId <= 0)
             {
@@ -62,7 +64,11 @@ namespace FermierExpert.Controllers
                 return BadRequest();
             }
             var visitsResponse = new ListaDubluInlantuita<VisitResponse>();
-            foreach (var visit in _database.Visits
+            var filteredList = _queryExtensions.WhereByColumns(_database.Visits, query.FilterPayload);
+            var orderedList = _queryExtensions
+                .OrderByColumns(filteredList, query.SortColumns);
+            var sortedList = _queryExtensions.Slice(orderedList, query.Start, query.Count);
+            foreach (var visit in sortedList
                 .Where(x => x.EmployeeId == existingEmployee.Id)
                 .Select(x => new VisitResponse(x)))
             {

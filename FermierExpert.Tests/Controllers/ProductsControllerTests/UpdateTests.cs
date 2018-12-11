@@ -10,7 +10,7 @@ namespace FermierExpert.Tests.ProductsControllerTests
         [Fact]
         public void Update_Should_Return_Bad_Request_On_Null_Commnad()
         {
-            var controller = new ProductsController(MockDatabaseFactory.Create());
+            var controller = new ProductsController(MockDatabaseFactory.Create(), MockQueryHelperFactory.Create());
             var response = controller.Update(null);
             Assert.IsType<BadRequestResult>(response);
         }
@@ -18,7 +18,7 @@ namespace FermierExpert.Tests.ProductsControllerTests
         [Fact]
         public void Update_Should_Return_Bad_Request_On_Invalid_Id()
         {
-            var controller = new ProductsController(MockDatabaseFactory.Create());
+            var controller = new ProductsController(MockDatabaseFactory.Create(), MockQueryHelperFactory.Create());
             var response = controller.Update(new Commands.ProductCommand
             {
                 Id = 0,
@@ -36,7 +36,7 @@ namespace FermierExpert.Tests.ProductsControllerTests
         [Fact]
         public void Update_Should_Return_Bad_Request_On_Invalid_Company_Id()
         {
-            var controller = new ProductsController(MockDatabaseFactory.Create());
+            var controller = new ProductsController(MockDatabaseFactory.Create(), MockQueryHelperFactory.Create());
             var product = new ProductCommand { Id = 1, CompanyId = 0 };
             var product2 = new ProductCommand { Id = 1, CompanyId = -4 };
             var response = controller.Update(product);
@@ -48,7 +48,7 @@ namespace FermierExpert.Tests.ProductsControllerTests
         [Fact]
         public void Update_Should_Return_Bad_Request_On_NonExisting_Product()
         {
-            var controller = new ProductsController(MockDatabaseFactory.Create());
+            var controller = new ProductsController(MockDatabaseFactory.Create(), MockQueryHelperFactory.Create());
             var product = new ProductCommand { Id = 7, CompanyId = 1 };
             var response = controller.Update(product);
             Assert.IsType<BadRequestResult>(response);
@@ -57,7 +57,7 @@ namespace FermierExpert.Tests.ProductsControllerTests
         [Fact]
         public void Update_Should_Return_Bad_Request_On_NonExisting_Company()
         {
-            var controller = new ProductsController(MockDatabaseFactory.Create());
+            var controller = new ProductsController(MockDatabaseFactory.Create(), MockQueryHelperFactory.Create());
             var product = new ProductCommand { Id = 1, CompanyId = 6 };
             var response = controller.Update(product);
             Assert.IsType<BadRequestResult>(response);
@@ -66,7 +66,7 @@ namespace FermierExpert.Tests.ProductsControllerTests
         [Fact]
         public void Update_Should_Return_Ok()
         {
-            var controller = new ProductsController(MockDatabaseFactory.Create());
+            var controller = new ProductsController(MockDatabaseFactory.Create(), MockQueryHelperFactory.Create());
             var product = new ProductCommand { Id = 1, CompanyId = 1 };
             var response = controller.Update(product);
             Assert.IsType<OkResult>(response);

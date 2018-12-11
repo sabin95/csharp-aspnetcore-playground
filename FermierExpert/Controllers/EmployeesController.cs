@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FermierExpert.Commands;
 using FermierExpert.Data;
 using FermierExpert.Models;
+using FermierExpert.Queries;
 using FermierExpert.Responses;
 using FermierExpert.Services.Contracts;
 using ListaDubluInlantuita;
@@ -12,23 +13,29 @@ using Microsoft.AspNetCore.Mvc;
 namespace FermierExpert.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
     public class EmployeesController : ControllerBase
     {
         private IPhoneNumberValidator _phoneValidator;
         private IEmailAddressValidator _emailValidator;
         private Database _database;
-        public EmployeesController(Database database, IPhoneNumberValidator phoneValidator, IEmailAddressValidator emailValidator)
+        private readonly IQueryHelper _queryExtensions;
+        public EmployeesController(Database database, IPhoneNumberValidator phoneValidator, 
+                                    IEmailAddressValidator emailValidator, IQueryHelper queryExtension)
         {
             _database = database;
             _phoneValidator = phoneValidator;
             _emailValidator = emailValidator;
+            _queryExtensions = queryExtension;
         }
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get(GetAllBaseQuery<EmployeeCommand> query)
         {
             var employeeResponse = new ListaDubluInlantuita<EmployeeResponse>();
-            foreach (var employee in _database.Employees)
+            var filteredList = _queryExtensions.WhereByColumns(_database.Employees, query.FilterPayload);
+            var orderedList = _queryExtensions
+                .OrderByColumns(filteredList, query.SortColumns);
+            var sortedList = _queryExtensions.Slice(orderedList, query.Start, query.Count);
+            foreach (var employee in sortedList)
             {
                 var visits = new ListaDubluInlantuita<VisitResponse>();
                 foreach (var visit in _database.Visits
@@ -72,36 +79,7 @@ namespace FermierExpert.Controllers
             return Ok(response);
         }
 
-        [HttpGet("search/{name}")]
-        public IActionResult GetByName(string name)
-        {
-            if (String.IsNullOrEmpty(name))
-            {
-                return BadRequest("Name is null");
-            }
-            var employeeResponses = new ListaDubluInlantuita<EmployeeResponse>();
-            foreach (var existingEmployee in _database.Employees
-                .Where(x => x.LastName.ToLower().Contains((name.ToLower())) || x.FirstName.ToLower().Contains((name.ToLower())))
-                .Select(x => new EmployeeResponse(x)))
-            {
-                var visits = new ListaDubluInlantuita<VisitResponse>();
-                foreach (var visit in _database.Visits
-                    .Where(x => x.EmployeeId == existingEmployee.Id)
-                    .Select(x => new VisitResponse(x)))
-                {
-                    visits.Add(visit);
-                }
-                var response = new EmployeeResponse(existingEmployee)
-                {
-                    Visits = visits
-                };
-                employeeResponses.Add(existingEmployee);
-            }
-            return Ok(employeeResponses);
-        }
-
-
-
+        
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] EmployeeCommand employeeCommand)
         {

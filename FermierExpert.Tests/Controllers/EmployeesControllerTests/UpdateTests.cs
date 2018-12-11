@@ -12,7 +12,8 @@ namespace FermierExpert.Tests.EmployeesControllerTests
         [Fact]
         public async Task Update_Should_Return_Bad_Request_On_Null_Commnad()
         {
-            var controller = new EmployeesController(MockDatabaseFactory.Create(), new RegexPhoneNumberValidator(), new RegexEmailAddressValidator());
+            var controller = new EmployeesController(MockDatabaseFactory.Create(), new RegexPhoneNumberValidator(), 
+                                    new RegexEmailAddressValidator(), MockQueryHelperFactory.Create());
             var response = await controller.Update(null);
             Assert.IsType<BadRequestResult>(response);
         }
@@ -20,7 +21,8 @@ namespace FermierExpert.Tests.EmployeesControllerTests
         [Fact]
         public async Task Update_Should_Return_Bad_Request_On_Invalid_Id()
         {
-            var controller = new EmployeesController(MockDatabaseFactory.Create(), new RegexPhoneNumberValidator(), new RegexEmailAddressValidator());
+            var controller = new EmployeesController(MockDatabaseFactory.Create(), new RegexPhoneNumberValidator(), 
+                                    new RegexEmailAddressValidator(), MockQueryHelperFactory.Create());
             var response = await controller.Update(new Commands.EmployeeCommand
             {
                 Id = 0
@@ -35,7 +37,8 @@ namespace FermierExpert.Tests.EmployeesControllerTests
         [Fact]
         public async Task Update_Should_Return_Bad_Request_On_NonExisting_Employee()
         {
-            var controller = new EmployeesController(MockDatabaseFactory.Create(), new RegexPhoneNumberValidator(), new RegexEmailAddressValidator());
+            var controller = new EmployeesController(MockDatabaseFactory.Create(), new RegexPhoneNumberValidator(),
+                                        new RegexEmailAddressValidator(), MockQueryHelperFactory.Create());
             var empoyeeToAdd = new EmployeeCommand { Id = 12 };
             var response = await controller.Update(empoyeeToAdd);
             Assert.IsType<BadRequestResult>(response);
@@ -43,7 +46,8 @@ namespace FermierExpert.Tests.EmployeesControllerTests
         [Fact]
         public async Task Update_Should_Return_Bad_Request_On_Invalid_PhoneNumber()
         {
-            var controller = new EmployeesController(MockDatabaseFactory.Create(), new RegexPhoneNumberValidator(), new RegexEmailAddressValidator());
+            var controller = new EmployeesController(MockDatabaseFactory.Create(), new RegexPhoneNumberValidator(), 
+                                        new RegexEmailAddressValidator(), MockQueryHelperFactory.Create());
             var employee = new EmployeeCommand { Id = 1, Phone = "073dsds0151058", Email = "dsadsadsa" };
             var response = await controller.Update(employee);
             Assert.IsType<BadRequestObjectResult>(response);
@@ -52,7 +56,8 @@ namespace FermierExpert.Tests.EmployeesControllerTests
         [Fact]
         public async Task Update_Should_Return_Bad_Request_On_Invalid_Email()
         {
-            var controller = new EmployeesController(MockDatabaseFactory.Create(), new RegexPhoneNumberValidator(), new RegexEmailAddressValidator());
+            var controller = new EmployeesController(MockDatabaseFactory.Create(), new RegexPhoneNumberValidator(), 
+                                new RegexEmailAddressValidator(), MockQueryHelperFactory.Create());
             var employee = new EmployeeCommand { Id = 1, Phone = "073dsds0151058", Email = "dsadsadsa" };
             var response = await controller.Update(employee);
             Assert.IsType<BadRequestObjectResult>(response);
@@ -61,7 +66,8 @@ namespace FermierExpert.Tests.EmployeesControllerTests
         [Fact]
         public async Task Update_Should_Return_Ok()
         {
-            var controller = new EmployeesController(MockDatabaseFactory.Create(), new RegexPhoneNumberValidator(), new RegexEmailAddressValidator());
+            var controller = new EmployeesController(MockDatabaseFactory.Create(), new RegexPhoneNumberValidator(), 
+                                    new RegexEmailAddressValidator(), MockQueryHelperFactory.Create());
             var employee = new EmployeeCommand { Id = 1, Phone = "+40730151058", Email = "dsads@adsa.ro" };
             var response = await controller.Update(employee);
             Assert.IsType<OkResult>(response);

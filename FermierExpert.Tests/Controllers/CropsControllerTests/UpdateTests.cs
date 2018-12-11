@@ -13,7 +13,7 @@ namespace FermierExpert.Tests.CropsControllerTests
         [Fact]
         public void Update_Should_Return_Bad_Request_On_Null_Commnad()
         {
-            var controller = new CropsController(MockDatabaseFactory.Create());
+            var controller = new CropsController(MockDatabaseFactory.Create(), MockQueryHelperFactory.Create());
             var response = controller.UpdateCrop(null);
             Assert.IsType<BadRequestResult>(response);
         }
@@ -21,7 +21,7 @@ namespace FermierExpert.Tests.CropsControllerTests
         [Fact]
         public void Update_Should_Return_Bad_Request_On_Invalid_Id()
         {
-            var controller = new CropsController(MockDatabaseFactory.Create());
+            var controller = new CropsController(MockDatabaseFactory.Create(), MockQueryHelperFactory.Create());
             var response = controller.UpdateCrop(new Commands.CropCommand
             {
                 Id = 0
@@ -31,7 +31,7 @@ namespace FermierExpert.Tests.CropsControllerTests
         [Fact]
         public void Update_Should_Return_Bad_Request_On_NonExisting_Crop()
         {
-            var controller = new CropsController(MockDatabaseFactory.Create());
+            var controller = new CropsController(MockDatabaseFactory.Create(), MockQueryHelperFactory.Create());
             var crop = new CropCommand { Id = 12 };
             var response = controller.UpdateCrop(crop);
             Assert.IsType<BadRequestResult>(response);
@@ -40,7 +40,7 @@ namespace FermierExpert.Tests.CropsControllerTests
         [Fact]
         public void Update_Should_Return_Ok()
         {
-            var controller = new CropsController(MockDatabaseFactory.Create());
+            var controller = new CropsController(MockDatabaseFactory.Create(), MockQueryHelperFactory.Create());
             var crop = new CropCommand { Id = 1 };
             var response = controller.UpdateCrop(crop);
             Assert.IsType<OkResult>(response);

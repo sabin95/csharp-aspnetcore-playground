@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FermierExpert.Commands;
 using FermierExpert.Data;
+using FermierExpert.Queries;
 using FermierExpert.Responses;
 using FermierExpert.Services.Contracts;
 using ListaDubluInlantuita;
@@ -10,22 +12,29 @@ using Microsoft.AspNetCore.Mvc;
 namespace FermierExpert.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
     public class CompaniesController : ControllerBase
     {
         private readonly Database _database;
         private readonly ICountryValidator _countryValidator;
+        private readonly IQueryHelper _queryExtensions;
 
-        public CompaniesController(Database database, ICountryValidator countryValidator)
+        public CompaniesController(Database database, ICountryValidator countryValidator, IQueryHelper queryExtensions)
         {
             _database = database;
             _countryValidator = countryValidator;
+            _queryExtensions = queryExtensions;
         }
+
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get(GetAllBaseQuery<CompanyCommand> query)
         {
+            
             var companyResponses = new ListaDubluInlantuita<CompanyResponse>();
-            foreach (var company in _database.Companies)
+            var filteredList = _queryExtensions.WhereByColumns(_database.Companies, query.FilterPayload);
+            var orderedList = _queryExtensions
+                .OrderByColumns(filteredList, query.SortColumns);
+            var sortedList = _queryExtensions.Slice(orderedList, query.Start, query.Count);
+            foreach (var company in sortedList)
             {
                 var products = new ListaDubluInlantuita<ProductResponse>();
                 foreach (var product in _database.Products
