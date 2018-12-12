@@ -96,6 +96,11 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
+            var existingCropField = _database.CropFields.FirstOrDefault(x => x.CropId == cropToRemove.Id);
+            if (existingCropField != null)
+            {
+                return BadRequest();
+            }
             _database.Crops.Remove(cropToRemove);
             return Ok();
         }

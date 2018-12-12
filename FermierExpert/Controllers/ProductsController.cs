@@ -127,6 +127,11 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
+            var existingStock = _database.Stocks.FirstOrDefault(x => x.ProductId == existingProduct.Id);
+            if (existingStock !=null)
+            {
+                return BadRequest();
+            }
             _database.Products.Remove(existingProduct);
             return Ok();
         }
