@@ -168,6 +168,21 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
+            var existingCropField = _database.CropFields.FirstOrDefault(x => x.ClientId == existingClient.Id);
+            if (existingCropField != null)
+            {
+                return BadRequest();
+            }
+            var existingStock = _database.Stocks.FirstOrDefault(x => x.ClientId == existingClient.Id);
+            if (existingStock != null)
+            {
+                return BadRequest();
+            }
+            var existingVisit = _database.Visits.FirstOrDefault(x => x.ClientId == existingClient.Id);
+            if (existingVisit != null)
+            {
+                return BadRequest();
+            }
             _database.Clients.Remove(existingClient);
             return Ok();
         }

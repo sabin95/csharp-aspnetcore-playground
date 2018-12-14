@@ -144,6 +144,11 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
+            var existingProduct = _database.Products.FirstOrDefault(x => x.CompanyId == existingCompany.Id);
+            if (existingProduct !=null)
+            {
+                return BadRequest();
+            }
             _database.Companies.Remove(existingCompany);
             return Ok();
         }

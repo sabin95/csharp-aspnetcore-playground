@@ -150,6 +150,11 @@ namespace FermierExpert.Controllers
             {
                 return BadRequest();
             }
+            var existingVisit = _database.Visits.FirstOrDefault(x => x.EmployeeId == existingEmployee.Id);
+            if (existingVisit != null)
+            {
+                return BadRequest();
+            }
             _database.Employees.Remove(existingEmployee);
             return Ok();
         }
