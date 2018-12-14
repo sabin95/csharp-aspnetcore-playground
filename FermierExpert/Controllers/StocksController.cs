@@ -1,7 +1,9 @@
 ﻿using System.Linq;
 using FermierExpert.Commands;
 using FermierExpert.Data;
+using FermierExpert.Queries;
 using FermierExpert.Responses;
+using FermierExpert.Services.Contracts;
 using ListaDubluInlantuita;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,16 +11,17 @@ namespace FermierExpert.Controllers
 {
 
     [Route("api/[controller]")]
-    [ApiController]
     public class StocksController : ControllerBase
     {
         private readonly Database _database;
-        public StocksController(Database database)
+        private readonly IQueryHelper _queryExtensions;
+        public StocksController(Database database, IQueryHelper queryExtension)
         {
             _database = database;
+            _queryExtensions = queryExtension;
         }
         [HttpGet("clients/{clientId}")]
-        public IActionResult GetStockByClient(int clientId)
+        public IActionResult GetStockByClient(int clientId, GetAllBaseQuery<StockCommand> query)
         {
             if (clientId <= 0)
             {
@@ -30,7 +33,11 @@ namespace FermierExpert.Controllers
                 return BadRequest();
             }
             var stocksResponse = new ListaDubluInlantuita<StockResponse>();
-            foreach (var stock in _database.Stocks
+            var filteredList = _queryExtensions.WhereByColumns(_database.Stocks, query.FilterPayload);
+            var orderedList = _queryExtensions
+                .OrderByColumns(filteredList, query.SortColumns);
+            var sortedList = _queryExtensions.Slice(orderedList, query.Start, query.Count);
+            foreach (var stock in sortedList
                 .Where(x => x.ClientId == existingClient.Id)
                 .Select(x => new StockResponse(x)))
             {
@@ -46,7 +53,7 @@ namespace FermierExpert.Controllers
         }
 
         [HttpGet("product/productId")]
-        public IActionResult GetStocksByProductId(int productId)
+        public IActionResult GetStocksByProductId(int productId, GetAllBaseQuery<StockCommand> query)
         {
             if (productId <= 0)
             {
@@ -58,7 +65,11 @@ namespace FermierExpert.Controllers
                 return BadRequest();
             }
             var stocksResponse = new ListaDubluInlantuita<StockResponse>();
-            foreach (var stock in _database.Stocks
+            var filteredList = _queryExtensions.WhereByColumns(_database.Stocks, query.FilterPayload);
+            var orderedList = _queryExtensions
+                .OrderByColumns(filteredList, query.SortColumns);
+            var sortedList = _queryExtensions.Slice(orderedList, query.Start, query.Count);
+            foreach (var stock in sortedList
                 .Where(x => x.ProductId == existingProduct.Id)
                 .Select(x => new StockResponse(x)))
             {

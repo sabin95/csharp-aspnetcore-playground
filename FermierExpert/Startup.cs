@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
 using System.IO;
 
 namespace FermierExpert
@@ -41,6 +42,15 @@ namespace FermierExpert
             services.AddTransient<IPhoneNumberValidator, RegexPhoneNumberValidator>();
             services.AddTransient<IEmailAddressValidator, RegexEmailAddressValidator>();
             services.AddTransient<ICountryValidator, RapidApiCountryValidator>();
+            services.AddTransient<IComparer<int>, IntComparer>();
+            services.AddTransient<IComparer<string>, Services.StringComparer>();
+            services.AddTransient<IComparer<float>, FloatComparer>();
+            services.AddTransient<IComparer<long>, LongComparer>();
+            services.AddTransient<IComparer<Guid>, GuidComparer>();
+            services.AddTransient<IComparer<DateTime>, DateTimeComparer>();
+            services.AddTransient<IComparer<Enum>, EnumComparer>();
+            services.AddTransient<IQueryHelper, QueryHelper>();
+
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, Database database)

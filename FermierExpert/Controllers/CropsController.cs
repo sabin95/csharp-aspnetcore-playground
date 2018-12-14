@@ -1,6 +1,8 @@
 ﻿using FermierExpert.Commands;
 using FermierExpert.Data;
+using FermierExpert.Queries;
 using FermierExpert.Responses;
+using FermierExpert.Services.Contracts;
 using ListaDubluInlantuita;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
@@ -11,16 +13,22 @@ namespace FermierExpert.Controllers
     public class CropsController : Controller
     {
         private readonly Database _database;
+        private readonly IQueryHelper _queryExtensions;
 
-        public CropsController(Database database)
+        public CropsController(Database database, IQueryHelper queryExtension)
         {
             _database = database;
+            _queryExtensions = queryExtension;
         }
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get(GetAllBaseQuery<CropCommand> query)
         {
             var cropsResponse = new ListaDubluInlantuita<CropResponse>();
-            foreach (var crop in _database.Crops)
+            var filteredList = _queryExtensions.WhereByColumns(_database.Crops, query.FilterPayload);
+            var orderedList = _queryExtensions
+                .OrderByColumns(filteredList, query.SortColumns);
+            var sortedList = _queryExtensions.Slice(orderedList, query.Start, query.Count);
+            foreach (var crop in sortedList)
             {
                 cropsResponse.Add(new CropResponse(crop));
             }

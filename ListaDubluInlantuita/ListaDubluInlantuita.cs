@@ -172,7 +172,10 @@ namespace ListaDubluInlantuita
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            for(var i = 0; i < Count; i++)
+            {
+                array[i] = this[i];
+            }
         }
 
         public bool Remove(T item)
